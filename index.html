@@ -75,10 +75,10 @@
             position: absolute;
             inset: 0;
             pointer-events: none;
-            z-index: 18;
+            z-index: 28;
             opacity: 0;
-            transition: opacity 0.12s ease;
-            background: radial-gradient(circle at center, transparent 32%, black 33%, black 100%);
+            transition: opacity 0.1s ease;
+            background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.85) 31%, black 36%, black 100%);
         }
 
         .custom-scrollbar::-webkit-scrollbar {
@@ -116,9 +116,25 @@
 
     <!-- Sniper Scope Overlay -->
     <div id="sniper-scope" class="flex items-center justify-center">
-        <div class="w-full h-[1px] bg-red-500/80"></div>
-        <div class="absolute h-full w-[1px] bg-red-500/80"></div>
-        <div class="absolute w-20 h-20 border border-red-500/40 rounded-full"></div>
+        <!-- Reticle Crosshairs -->
+        <div class="w-full h-[1.5px] bg-red-500/90 shadow-[0_0_4px_rgba(239,68,68,0.8)]"></div>
+        <div class="absolute h-full w-[1.5px] bg-red-500/90 shadow-[0_0_4px_rgba(239,68,68,0.8)]"></div>
+        <!-- Center Mil-Dot Circles -->
+        <div class="absolute w-28 h-28 border border-red-500/50 rounded-full pointer-events-none"></div>
+        <div class="absolute w-56 h-56 border border-red-500/25 rounded-full pointer-events-none"></div>
+        <!-- Center Dot and Hashes -->
+        <div class="absolute w-2 h-2 bg-red-500 rounded-full shadow-[0_0_6px_#ef4444]"></div>
+        <div class="absolute -translate-y-8 w-1.5 h-1.5 bg-red-400 rounded-full"></div>
+        <div class="absolute translate-y-8 w-1.5 h-1.5 bg-red-400 rounded-full"></div>
+        <div class="absolute -translate-x-8 w-1.5 h-1.5 bg-red-400 rounded-full"></div>
+        <div class="absolute translate-x-8 w-1.5 h-1.5 bg-red-400 rounded-full"></div>
+        <div class="absolute -translate-y-16 w-1 h-1 bg-red-400/80 rounded-full"></div>
+        <div class="absolute translate-y-16 w-1 h-1 bg-red-400/80 rounded-full"></div>
+        <div class="absolute -translate-x-16 w-1 h-1 bg-red-400/80 rounded-full"></div>
+        <div class="absolute translate-x-16 w-1 h-1 bg-red-400/80 rounded-full"></div>
+        <!-- Tactical Elevation Text -->
+        <div class="absolute top-[38%] left-[53%] text-[10px] font-mono text-red-400/80 font-bold select-none">8x MAG</div>
+        <div class="absolute bottom-[38%] left-[53%] text-[10px] font-mono text-red-400/80 font-bold select-none">MIL-SPEC</div>
     </div>
 
     <!-- Crosshair UI -->
@@ -187,11 +203,11 @@
                 </div>
                 <div class="flex justify-between items-center text-[11px] text-slate-400 font-mono">
                     <span>STATUS: <span id="player-status" class="text-emerald-400 font-bold">READY</span></span>
-                    <span>TEAM: PHANTOMS</span>
+                    <span>K/D: <span id="kd-display" class="text-amber-400 font-bold">0 / 0</span></span>
                 </div>
             </div>
 
-            <!-- Deployment & Model Manager Trigger -->
+            <!-- Deployment, Model Manager & Settings Trigger -->
             <div class="flex gap-3 pointer-events-auto">
                 <button id="open-loadout-btn" class="pf-panel pf-clip-btn px-5 py-3 text-sky-400 font-bold text-xs tracking-wider border border-sky-500/40 hover:bg-sky-500/20 active:scale-95 transition cursor-pointer flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
@@ -200,6 +216,10 @@
                 <button id="open-customizer-btn" class="pf-panel pf-clip-btn px-5 py-3 text-cyan-400 font-bold text-xs tracking-wider border border-cyan-500/40 hover:bg-cyan-500/20 active:scale-95 transition cursor-pointer flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                     BLENDER MODEL LOADER [M]
+                </button>
+                <button id="open-settings-btn" class="pf-panel pf-clip-btn px-5 py-3 text-amber-400 font-bold text-xs tracking-wider border border-amber-500/40 hover:bg-amber-500/20 active:scale-95 transition cursor-pointer flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    SETTINGS [O]
                 </button>
             </div>
 
@@ -249,7 +269,11 @@
                 <h1 class="pf-title text-5xl font-bold tracking-wider text-sky-400">PHANTOM FORCES 3D</h1>
                 <p class="text-xs text-slate-400 font-mono tracking-widest">TACTICAL DEPLOYMENT & LOADOUT CUSTOMIZATION</p>
             </div>
-            <div class="flex gap-4">
+            <div class="flex gap-4 items-center">
+                <button id="open-settings-loadout-btn" class="pf-panel pf-clip-btn px-4 py-2 text-amber-400 font-bold text-xs tracking-wider border border-amber-500/40 hover:bg-amber-500/20 active:scale-95 transition cursor-pointer flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    SETTINGS [O]
+                </button>
                 <div class="text-right">
                     <div class="text-xs text-slate-400">OPERATOR</div>
                     <div class="text-sm font-bold text-sky-400">PHANTOM-1</div>
@@ -278,32 +302,55 @@
                 </div>
             </div>
 
-            <!-- Weapon Specs & Attachment Options -->
+            <!-- Weapon Modular Attachments Options -->
             <div class="pf-panel pf-clip-hud p-6 space-y-4">
-                <h2 class="text-sm font-bold text-sky-400 tracking-wider border-b border-slate-700 pb-2">ATTACHMENTS & OPTICS</h2>
-                <div class="space-y-3">
+                <div class="border-b border-slate-700 pb-2 flex justify-between items-center">
+                    <h2 class="text-sm font-bold text-sky-400 tracking-wider">MODULAR ATTACHMENTS</h2>
+                    <span class="text-[10px] text-cyan-400 font-mono">ANY PART ON ANY GUN</span>
+                </div>
+                <div class="space-y-2.5 max-h-[380px] overflow-y-auto pr-1 custom-scrollbar">
                     <div>
-                        <label class="text-xs font-bold text-slate-300 mb-1 block">OPTIC / SCOPE</label>
-                        <select id="optic-select" class="w-full bg-slate-900 border border-slate-700 text-xs text-sky-300 p-2.5 rounded-none font-mono">
-                            <option value="iron">Iron Sights (Default)</option>
+                        <label class="text-[11px] font-bold text-slate-300 mb-0.5 block">1. OPTIC / SCOPE</label>
+                        <select id="optic-select" class="w-full bg-slate-900 border border-slate-700 text-xs text-sky-300 p-2 rounded-none font-mono">
+                            <option value="iron">Iron Sights (Fastest ADS)</option>
                             <option value="reddot">Coyote Red Dot Sight</option>
                             <option value="acog">ACOG 4x Tactical Scope</option>
+                            <option value="sniper">8x High-Power Sniper Scope</option>
                         </select>
                     </div>
                     <div>
-                        <label class="text-xs font-bold text-slate-300 mb-1 block">BARREL ATTACHMENT</label>
-                        <select id="barrel-select" class="w-full bg-slate-900 border border-slate-700 text-xs text-sky-300 p-2.5 rounded-none font-mono">
-                            <option value="none">Standard Barrel</option>
-                            <option value="suppressor">PBS Suppressor (Reduced Recoil)</option>
-                            <option value="compensator">Compensator (Horizontal Stability)</option>
+                        <label class="text-[11px] font-bold text-slate-300 mb-0.5 block">2. MUZZLE ATTACHMENT</label>
+                        <select id="muzzle-select" class="w-full bg-slate-900 border border-slate-700 text-xs text-sky-300 p-2 rounded-none font-mono">
+                            <option value="none">Standard Flash Hider</option>
+                            <option value="suppressor">PBS Tactical Suppressor (-Recoil/Silent)</option>
+                            <option value="compensator">Recoil Compensator (-30% Side Jitter)</option>
+                            <option value="brake">Heavy Muzzle Brake (-28% Climb)</option>
                         </select>
                     </div>
                     <div>
-                        <label class="text-xs font-bold text-slate-300 mb-1 block">UNDERBARREL</label>
-                        <select id="underbarrel-select" class="w-full bg-slate-900 border border-slate-700 text-xs text-sky-300 p-2.5 rounded-none font-mono">
-                            <option value="none">None</option>
-                            <option value="angled">Angled Grip (+ADS Speed)</option>
-                            <option value="stubby">Stubby Grip (+Recoil Control)</option>
+                        <label class="text-[11px] font-bold text-slate-300 mb-0.5 block">3. TACTICAL STOCK</label>
+                        <select id="stock-select" class="w-full bg-slate-900 border border-slate-700 text-xs text-sky-300 p-2 rounded-none font-mono">
+                            <option value="standard">Standard Tactical Stock (Balanced)</option>
+                            <option value="skeletal">Skeletal Minimalist Stock (+Speed)</option>
+                            <option value="heavy">Heavy Sniper Stock (-Camera Kick)</option>
+                            <option value="folded">CQB No Stock / Folded (+Mobility)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-slate-300 mb-0.5 block">4. MAGAZINE CAPACITY</label>
+                        <select id="mag-select" class="w-full bg-slate-900 border border-slate-700 text-xs text-sky-300 p-2 rounded-none font-mono">
+                            <option value="standard">Standard Magazine</option>
+                            <option value="extended">Extended Mag (+50% Capacity)</option>
+                            <option value="drum">High-Cap Drum Mag (+100% Capacity)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-slate-300 mb-0.5 block">5. HANDLE / FOREGRIP</label>
+                        <select id="handle-select" class="w-full bg-slate-900 border border-slate-700 text-xs text-sky-300 p-2 rounded-none font-mono">
+                            <option value="none">None (Standard Handguard)</option>
+                            <option value="vertical">Vertical Foregrip (-22% Climb)</option>
+                            <option value="angled">Angled Grip (+ADS Transition)</option>
+                            <option value="stubby">Tactical Stubby Grip (+Stability)</option>
                         </select>
                     </div>
                 </div>
@@ -352,7 +399,83 @@
 
         <!-- Tactical Controls Hint Footer -->
         <div class="border-t border-slate-800 pt-3 text-center text-xs text-slate-400 font-mono">
-            TACTICAL CONTROLS: [WASD] Move | [SHIFT] Sprint | [RIGHT CLICK] Aim Down Sights | [C/CTRL] Crouch | [Z] Prone | [SPACE] Jump | [N] Loadout | [M] Models
+            TACTICAL CONTROLS: [WASD] Move | [SHIFT] Sprint | [RIGHT CLICK] ADS | [C/CTRL] Crouch | [Z] Prone | [SPACE] Jump | [R] Reload | [1/2/3] Weapons | [O] Settings | [N] Loadout | [M] Models
+        </div>
+    </div>
+
+    <!-- Game Settings Modal -->
+    <div id="settings-panel" class="hidden absolute inset-0 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center text-white z-50 p-6">
+        <div class="max-w-xl w-full pf-panel pf-clip-hud p-6 flex flex-col gap-6 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-700/80 pb-4">
+                <div>
+                    <h2 class="pf-title text-3xl font-bold text-amber-400 tracking-wider">GAME SETTINGS</h2>
+                    <p class="text-xs text-slate-400 font-mono tracking-wider">TACTICAL DISPLAY, AUDIO & CONTROL PREFERENCES</p>
+                </div>
+                <button id="close-settings-btn" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-none text-xs font-bold transition cursor-pointer border border-slate-700">Close [ESC / O]</button>
+            </div>
+
+            <div class="space-y-5">
+                <!-- Field of View (FOV) -->
+                <div class="bg-slate-900/60 p-4 border border-slate-800 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <label class="text-xs font-bold text-sky-400 tracking-wider">FIELD OF VIEW (FOV)</label>
+                            <p class="text-[11px] text-slate-400 font-mono">Camera view angle for peripheral vision</p>
+                        </div>
+                        <span id="val-setting-fov" class="text-lg font-mono font-bold text-sky-400">78°</span>
+                    </div>
+                    <input type="range" id="setting-fov" min="60" max="115" step="1" value="78" class="w-full accent-sky-400 cursor-pointer">
+                    <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+                        <span>60° (NARROW)</span>
+                        <span>78° (DEFAULT)</span>
+                        <span>115° (ULTRAWIDE)</span>
+                    </div>
+                </div>
+
+                <!-- Master Audio Volume -->
+                <div class="bg-slate-900/60 p-4 border border-slate-800 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <label class="text-xs font-bold text-amber-400 tracking-wider">AUDIO VOLUME</label>
+                            <p class="text-[11px] text-slate-400 font-mono">Combat SFX, gunshots & hitmarker audio</p>
+                        </div>
+                        <span id="val-setting-volume" class="text-lg font-mono font-bold text-amber-400">100%</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <input type="range" id="setting-volume" min="0" max="100" step="1" value="100" class="w-full accent-amber-400 cursor-pointer">
+                        <button id="test-audio-btn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 text-[11px] font-bold rounded-none whitespace-nowrap cursor-pointer transition">
+                            TEST AUDIO
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mouse Sensitivity -->
+                <div class="bg-slate-900/60 p-4 border border-slate-800 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <label class="text-xs font-bold text-emerald-400 tracking-wider">MOUSE SENSITIVITY</label>
+                            <p class="text-[11px] text-slate-400 font-mono">Aim speed & recoil compensation sensitivity</p>
+                        </div>
+                        <span id="val-setting-sens" class="text-lg font-mono font-bold text-emerald-400">1.00x</span>
+                    </div>
+                    <input type="range" id="setting-sens" min="0.2" max="3.0" step="0.05" value="1.0" class="w-full accent-emerald-400 cursor-pointer">
+                    <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+                        <span>0.20x (LOW)</span>
+                        <span>1.00x (NORMAL)</span>
+                        <span>3.00x (HIGH)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="flex justify-between items-center pt-2 border-t border-slate-800">
+                <button id="reset-settings-btn" class="text-xs text-slate-400 hover:text-amber-400 transition underline cursor-pointer">
+                    Reset Defaults
+                </button>
+                <button id="save-close-settings-btn" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs tracking-wider pf-clip-btn transition cursor-pointer">
+                    APPLY & CLOSE
+                </button>
+            </div>
         </div>
     </div>
 
@@ -412,16 +535,52 @@
     </div>
 
     <script>
-        /* Web Audio Sound Synthesizer */
+        /* Tactical Settings & Preference Management */
+        const defaultSettings = {
+            fov: 78,
+            volume: 1.0,
+            sensitivity: 1.0
+        };
+
+        let gameSettings = Object.assign({}, defaultSettings);
+
+        try {
+            const saved = localStorage.getItem('pf3d_settings');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (typeof parsed.fov === 'number' && !isNaN(parsed.fov)) gameSettings.fov = parsed.fov;
+                if (typeof parsed.volume === 'number' && !isNaN(parsed.volume)) gameSettings.volume = parsed.volume;
+                if (typeof parsed.sensitivity === 'number' && !isNaN(parsed.sensitivity)) gameSettings.sensitivity = parsed.sensitivity;
+            }
+        } catch (e) {}
+
+        function saveSettings() {
+            try {
+                localStorage.setItem('pf3d_settings', JSON.stringify(gameSettings));
+            } catch (e) {}
+        }
+
+        /* Web Audio Sound Synthesizer with Master Volume */
         const AudioContextClass = window.AudioContext || window.webkitAudioContext;
         let audioCtx = null;
+        let masterGain = null;
 
         function initAudioContext() {
             if (!audioCtx && AudioContextClass) {
                 audioCtx = new AudioContextClass();
+                masterGain = audioCtx.createGain();
+                masterGain.gain.setValueAtTime(gameSettings.volume, audioCtx.currentTime);
+                masterGain.connect(audioCtx.destination);
             }
             if (audioCtx && audioCtx.state === 'suspended') {
                 audioCtx.resume().catch(() => {});
+            }
+        }
+
+        function setMasterVolume(vol) {
+            gameSettings.volume = Math.max(0, Math.min(1, vol));
+            if (masterGain && audioCtx) {
+                masterGain.gain.setValueAtTime(gameSettings.volume, audioCtx.currentTime);
             }
         }
 
@@ -435,16 +594,29 @@
                 const now = audioCtx.currentTime;
 
                 osc.connect(gain);
-                gain.connect(audioCtx.destination);
+                gain.connect(masterGain || audioCtx.destination);
+
+                // If suppressed, produce a stealthy tactical subsonic pop
+                if (currentLoadout && currentLoadout.muzzle === 'suppressor') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(420, now);
+                    osc.frequency.exponentialRampToValueAtTime(50, now + 0.09);
+                    gain.gain.setValueAtTime(0.18, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+                    osc.start(now);
+                    osc.stop(now + 0.09);
+                    return;
+                }
 
                 if (type === 'intervention') {
+                    // Massive, thunderous .50 cal sniper gunshot
                     osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(300, now);
-                    osc.frequency.exponentialRampToValueAtTime(40, now + 0.35);
-                    gain.gain.setValueAtTime(0.4, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                    osc.frequency.setValueAtTime(260, now);
+                    osc.frequency.exponentialRampToValueAtTime(32, now + 0.45);
+                    gain.gain.setValueAtTime(0.55, now);
+                    gain.gain.exponentialRampToValueAtTime(0.005, now + 0.45);
                     osc.start(now);
-                    osc.stop(now + 0.35);
+                    osc.stop(now + 0.45);
                 } else if (type === 'mp5') {
                     osc.type = 'square';
                     osc.frequency.setValueAtTime(700, now);
@@ -457,7 +629,7 @@
                     osc.type = 'sawtooth';
                     osc.frequency.setValueAtTime(600, now);
                     osc.frequency.exponentialRampToValueAtTime(60, now + 0.15);
-                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.setValueAtTime(0.28, now);
                     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
                     osc.start(now);
                     osc.stop(now + 0.15);
@@ -467,7 +639,7 @@
             }
         }
 
-        function playHitmarkerSound(isHeadshot = false) {
+        function playHitmarkerSound() {
             try {
                 initAudioContext();
                 if (!audioCtx) return;
@@ -477,15 +649,65 @@
                 const now = audioCtx.currentTime;
 
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(isHeadshot ? 1600 : 900, now);
+                osc.frequency.setValueAtTime(950, now);
                 gain.gain.setValueAtTime(0.2, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
 
                 osc.connect(gain);
-                gain.connect(audioCtx.destination);
+                gain.connect(masterGain || audioCtx.destination);
 
                 osc.start(now);
-                osc.stop(now + 0.08);
+                osc.stop(now + 0.07);
+            } catch (err) {
+                // Ignore audio exceptions
+            }
+        }
+
+        /* Iconic Crisp Metallic Helmet DINK Headshot Sound FX */
+        function playHeadshotSound() {
+            try {
+                initAudioContext();
+                if (!audioCtx) return;
+                const now = audioCtx.currentTime;
+
+                // 1. Resonant High Metallic Chime / Dink
+                const osc1 = audioCtx.createOscillator();
+                const gain1 = audioCtx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(2600, now);
+                osc1.frequency.exponentialRampToValueAtTime(1850, now + 0.16);
+                gain1.gain.setValueAtTime(0.50, now);
+                gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+                osc1.connect(gain1);
+                gain1.connect(masterGain || audioCtx.destination);
+                osc1.start(now);
+                osc1.stop(now + 0.16);
+
+                // 2. Sharp High Metallic Overtone Ring
+                const osc2 = audioCtx.createOscillator();
+                const gain2 = audioCtx.createGain();
+                osc2.type = 'triangle';
+                osc2.frequency.setValueAtTime(3600, now);
+                osc2.frequency.exponentialRampToValueAtTime(2400, now + 0.12);
+                gain2.gain.setValueAtTime(0.35, now);
+                gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+                osc2.connect(gain2);
+                gain2.connect(masterGain || audioCtx.destination);
+                osc2.start(now);
+                osc2.stop(now + 0.12);
+
+                // 3. Low Impact Punch / Thump
+                const osc3 = audioCtx.createOscillator();
+                const gain3 = audioCtx.createGain();
+                osc3.type = 'sawtooth';
+                osc3.frequency.setValueAtTime(220, now);
+                osc3.frequency.exponentialRampToValueAtTime(45, now + 0.06);
+                gain3.gain.setValueAtTime(0.35, now);
+                gain3.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+                osc3.connect(gain3);
+                gain3.connect(masterGain || audioCtx.destination);
+                osc3.start(now);
+                osc3.stop(now + 0.06);
             } catch (err) {
                 // Ignore audio exceptions
             }
@@ -495,7 +717,7 @@
         scene.background = new THREE.Color(0x030712);
         scene.fog = new THREE.FogExp2(0x030712, 0.012);
 
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(gameSettings.fov || 78, window.innerWidth / window.innerHeight, 0.1, 1000);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -568,7 +790,10 @@
         });
 
         renderer.domElement.addEventListener('click', () => {
-            if (!controls.isLocked && !isDead && document.getElementById('customizer-panel').classList.contains('hidden')) {
+            const customizer = document.getElementById('customizer-panel');
+            const settingsPanel = document.getElementById('settings-panel');
+            const modalsOpen = (customizer && !customizer.classList.contains('hidden')) || (settingsPanel && !settingsPanel.classList.contains('hidden'));
+            if (!controls.isLocked && !isDead && !modalsOpen) {
                 controls.lock();
             }
         });
@@ -578,13 +803,14 @@
             const movementX = e.movementX || 0;
             const movementY = e.movementY || 0;
 
-            yawObject.rotation.y -= movementX * 0.002;
-            pitchObject.rotation.x -= movementY * 0.002;
+            const sens = 0.002 * (gameSettings.sensitivity || 1.0);
+            yawObject.rotation.y -= movementX * sens;
+            pitchObject.rotation.x -= movementY * sens;
 
             pitchObject.rotation.x = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, pitchObject.rotation.x));
 
-            targetMouseSwayX += movementX * 0.0006;
-            targetMouseSwayY += movementY * 0.0006;
+            targetMouseSwayX += movementX * 0.0006 * (gameSettings.sensitivity || 1.0);
+            targetMouseSwayY += movementY * 0.0006 * (gameSettings.sensitivity || 1.0);
         });
 
         const WEAPONS = {
@@ -592,8 +818,12 @@
                 name: 'M4A1 ASSAULT RIFLE',
                 damage: 34,
                 fireRate: 800, // RPM
-                recoilKick: 0.04,
-                recoilClimb: 0.03,
+                recoilClimb: 0.042,        // Base vertical climb per shot (rad)
+                recoilKickH: 0.026,        // Horizontal jitter
+                gunKickZ: 0.065,           // Weapon physical kickback
+                gunRotX: 0.13,             // Weapon muzzle climb
+                spreadBase: 6,
+                spreadMax: 28,
                 maxClip: 30,
                 reserve: 120,
                 type: 'PRIMARY',
@@ -601,10 +831,14 @@
             },
             intervention: {
                 name: 'INTERVENTION SNIPER',
-                damage: 95,
-                fireRate: 50,
-                recoilKick: 0.15,
-                recoilClimb: 0.12,
+                damage: 98,
+                fireRate: 46,              // Heavy bolt-action
+                recoilClimb: 0.32,         // MASSIVE vertical kick (~18.3° climb!)
+                recoilKickH: 0.075,        // Heavy lateral jolt
+                gunKickZ: 0.25,            // Massive backward punch
+                gunRotX: 0.44,             // Violent muzzle flip
+                spreadBase: 12,
+                spreadMax: 45,
                 maxClip: 5,
                 reserve: 25,
                 type: 'PRIMARY',
@@ -614,8 +848,12 @@
                 name: 'MP5 SUBMACHINE GUN',
                 damage: 26,
                 fireRate: 900,
-                recoilKick: 0.025,
-                recoilClimb: 0.018,
+                recoilClimb: 0.030,
+                recoilKickH: 0.032,
+                gunKickZ: 0.045,
+                gunRotX: 0.09,
+                spreadBase: 8,
+                spreadMax: 32,
                 maxClip: 30,
                 reserve: 120,
                 type: 'PRIMARY',
@@ -712,42 +950,307 @@
         let customGunMesh = null;
         const gltfLoader = new THREE.GLTFLoader();
 
-        function createProceduralWeapon(type = 'm4a1') {
-            const group = new THREE.Group();
-            
-            if (type === 'intervention') {
-                const body = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.16, 1.1), new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.2 }));
-                const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.8), new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.8 }));
-                barrel.rotation.x = Math.PI / 2;
-                barrel.position.set(0, 0.02, -0.85);
-                
-                const scope = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.35), new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.9 }));
-                scope.rotation.x = Math.PI / 2;
-                scope.position.set(0, 0.12, -0.1);
-                
-                group.add(body, barrel, scope);
-            } else if (type === 'mp5') {
-                const body = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.14, 0.55), new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.3 }));
-                const mag = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.22, 0.08), new THREE.MeshStandardMaterial({ color: 0x0284c7 }));
-                mag.position.set(0, -0.12, -0.05);
-                mag.rotation.x = 0.2;
-                group.add(body, mag);
-            } else { // m4a1
-                const body = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.15, 0.75), new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.4 }));
-                const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.5), new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.8 }));
-                barrel.rotation.x = Math.PI / 2;
-                barrel.position.set(0, 0.02, -0.55);
-                const mag = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.25, 0.1), new THREE.MeshStandardMaterial({ color: 0x0f172a }));
-                mag.position.set(0, -0.14, -0.1);
-                mag.rotation.x = 0.25;
-                group.add(body, barrel, mag);
+        /* Modular Weapon System Definitions */
+        const ATTACHMENTS = {
+            scope: {
+                iron: { name: 'Iron Sights (Fast ADS)', fovMultiplier: 0.75, useSniperOverlay: false },
+                reddot: { name: 'Coyote Red Dot Sight', fovMultiplier: 0.60, useSniperOverlay: false },
+                acog: { name: 'ACOG 4x Tactical Scope', fovMultiplier: 0.42, useSniperOverlay: false },
+                sniper: { name: '8x High-Power Sniper Scope', fovMultiplier: 0.22, useSniperOverlay: true }
+            },
+            muzzle: {
+                none: { name: 'Standard Flash Hider', recoilClimbMod: 1.0, recoilKickHMod: 1.0 },
+                suppressor: { name: 'PBS Tactical Suppressor', recoilClimbMod: 0.78, recoilKickHMod: 0.82 },
+                compensator: { name: 'Recoil Compensator', recoilClimbMod: 0.95, recoilKickHMod: 0.65 },
+                brake: { name: 'Heavy Muzzle Brake', recoilClimbMod: 0.72, recoilKickHMod: 1.10 }
+            },
+            stock: {
+                standard: { name: 'Standard Tactical Stock', recoilClimbMod: 1.0, speedMod: 1.0 },
+                skeletal: { name: 'Skeletal Minimalist Stock', recoilClimbMod: 1.15, speedMod: 1.20 },
+                heavy: { name: 'Heavy Sniper Stock', recoilClimbMod: 0.75, speedMod: 0.90 },
+                folded: { name: 'CQB No Stock / Folded', recoilClimbMod: 1.25, speedMod: 1.25 }
+            },
+            mag: {
+                standard: { name: 'Standard Magazine', clipMod: 1.0 },
+                extended: { name: 'Extended Mag (+50%)', clipMod: 1.5 },
+                drum: { name: 'High-Cap Drum Mag (+100%)', clipMod: 2.0 }
+            },
+            handle: {
+                none: { name: 'None (Standard Handguard)', recoilClimbMod: 1.0, recoilKickHMod: 1.0 },
+                vertical: { name: 'Vertical Foregrip (-Recoil)', recoilClimbMod: 0.78, recoilKickHMod: 0.90 },
+                angled: { name: 'Angled Grip (+ADS Speed)', recoilClimbMod: 0.90, recoilKickHMod: 0.85 },
+                stubby: { name: 'Tactical Stubby Grip (+Stability)', recoilClimbMod: 0.85, recoilKickHMod: 0.75 }
             }
+        };
+
+        const currentLoadout = {
+            gun: 'm4a1',
+            scope: 'iron',
+            muzzle: 'none',
+            stock: 'standard',
+            mag: 'standard',
+            handle: 'none'
+        };
+
+        function createProceduralWeapon(gunType = currentLoadout.gun, loadout = currentLoadout) {
+            const group = new THREE.Group();
+
+            const gunmetalMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.45, metalness: 0.7 });
+            const darkSteelMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.35, metalness: 0.85 });
+            const polymerMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6, metalness: 0.2 });
+            const factionMat = new THREE.MeshStandardMaterial({
+                color: gunType === 'intervention' ? 0xf59e0b : (gunType === 'mp5' ? 0x10b981 : 0x0284c7),
+                metalness: 0.8,
+                roughness: 0.35
+            });
+            const lensMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.1, metalness: 0.95, transparent: true, opacity: 0.65 });
+
+            // Base Receiver Geometry & Anchor Points according to gunType
+            let barrelTipZ = -0.75;
+            let railCenterZ = -0.06;
+            let railY = 0.08;
+            let stockStartZ = 0.30;
+            let magY = -0.12;
+            let magZ = -0.08;
+            let handleY = -0.065;
+            let handleZ = -0.36;
+
+            if (gunType === 'intervention') {
+                barrelTipZ = -1.10;
+                railCenterZ = -0.10;
+                railY = 0.095;
+                stockStartZ = 0.42;
+                magY = -0.12;
+                magZ = -0.04;
+                handleY = -0.07;
+                handleZ = -0.50;
+
+                // Heavy .50 BMG Sniper Chassis
+                const body = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.16, 0.90), polymerMat);
+                const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.75, 12), darkSteelMat);
+                barrel.rotation.x = Math.PI / 2;
+                barrel.position.set(0, 0.02, -0.72);
+
+                const shroud = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.12, 0.45), gunmetalMat);
+                shroud.position.set(0, 0.02, -0.50);
+
+                const grip = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.18, 0.08), polymerMat);
+                grip.position.set(0, -0.16, 0.15);
+                grip.rotation.x = -0.3;
+
+                const bolt = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.08), factionMat);
+                bolt.position.set(0.075, 0.04, 0.05);
+                bolt.rotation.z = 1.4;
+
+                const rail = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.025, 0.60), darkSteelMat);
+                rail.position.set(0, 0.09, -0.10);
+
+                group.add(body, barrel, shroud, grip, bolt, rail);
+            } else if (gunType === 'mp5') {
+                barrelTipZ = -0.56;
+                railCenterZ = -0.05;
+                railY = 0.085;
+                stockStartZ = 0.24;
+                magY = -0.11;
+                magZ = -0.06;
+                handleY = -0.06;
+                handleZ = -0.30;
+
+                // Compact Submachine Gun Frame
+                const body = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.13, 0.48), gunmetalMat);
+                const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.32, 12), darkSteelMat);
+                barrel.rotation.x = Math.PI / 2;
+                barrel.position.set(0, 0.02, -0.40);
+
+                const handguard = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.22, 12), polymerMat);
+                handguard.rotation.x = Math.PI / 2;
+                handguard.position.set(0, 0.01, -0.30);
+
+                const grip = new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.16, 0.07), polymerMat);
+                grip.position.set(0, -0.13, 0.08);
+                grip.rotation.x = -0.3;
+
+                const rail = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.02, 0.32), darkSteelMat);
+                rail.position.set(0, 0.075, -0.05);
+
+                group.add(body, barrel, handguard, grip, rail);
+            } else { // m4a1
+                // Assault Rifle Receiver
+                const body = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.14, 0.60), gunmetalMat);
+                const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.45, 12), darkSteelMat);
+                barrel.rotation.x = Math.PI / 2;
+                barrel.position.set(0, 0.02, -0.52);
+
+                const handguard = new THREE.Mesh(new THREE.BoxGeometry(0.085, 0.10, 0.32), polymerMat);
+                handguard.position.set(0, 0.02, -0.38);
+
+                const grip = new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.16, 0.075), polymerMat);
+                grip.position.set(0, -0.14, 0.10);
+                grip.rotation.x = -0.35;
+
+                const rail = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.02, 0.45), darkSteelMat);
+                rail.position.set(0, 0.075, -0.05);
+
+                group.add(body, barrel, handguard, grip, rail);
+            }
+
+            // 2. MODULAR PART: MUZZLE ATTACHMENT
+            const muzzleType = loadout.muzzle || 'none';
+            if (muzzleType === 'suppressor') {
+                const can = new THREE.Mesh(new THREE.CylinderGeometry(0.034, 0.034, 0.28, 14), darkSteelMat);
+                can.rotation.x = Math.PI / 2;
+                can.position.set(0, 0.02, barrelTipZ - 0.14);
+                group.add(can);
+            } else if (muzzleType === 'compensator') {
+                const comp = new THREE.Mesh(new THREE.BoxGeometry(0.038, 0.038, 0.10), factionMat);
+                comp.position.set(0, 0.02, barrelTipZ - 0.05);
+                group.add(comp);
+            } else if (muzzleType === 'brake') {
+                const brake = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.024, 0.12, 8), darkSteelMat);
+                brake.rotation.x = Math.PI / 2;
+                brake.position.set(0, 0.02, barrelTipZ - 0.06);
+                group.add(brake);
+            } else { // Standard flash hider
+                const hider = new THREE.Mesh(new THREE.CylinderGeometry(0.020, 0.018, 0.06, 8), darkSteelMat);
+                hider.rotation.x = Math.PI / 2;
+                hider.position.set(0, 0.02, barrelTipZ - 0.03);
+                group.add(hider);
+            }
+
+            // 3. MODULAR PART: OPTIC / SCOPE
+            const scopeType = loadout.scope || 'iron';
+            if (scopeType === 'reddot') {
+                const base = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.025, 0.10), darkSteelMat);
+                base.position.set(0, railY + 0.012, railCenterZ);
+                const hood = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.055, 0.12), gunmetalMat);
+                hood.position.set(0, railY + 0.05, railCenterZ);
+                const glass = new THREE.Mesh(new THREE.PlaneGeometry(0.045, 0.04), lensMat);
+                glass.position.set(0, railY + 0.05, railCenterZ);
+                const dot = new THREE.Mesh(new THREE.SphereGeometry(0.004, 6, 6), new THREE.MeshBasicMaterial({ color: 0xef4444 }));
+                dot.position.set(0, railY + 0.05, railCenterZ - 0.01);
+                group.add(base, hood, glass, dot);
+            } else if (scopeType === 'acog') {
+                const base = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.03, 0.14), darkSteelMat);
+                base.position.set(0, railY + 0.015, railCenterZ);
+                const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.042, 0.24, 12), gunmetalMat);
+                tube.rotation.x = Math.PI / 2;
+                tube.position.set(0, railY + 0.055, railCenterZ);
+                const fiber = new THREE.Mesh(new THREE.BoxGeometry(0.008, 0.01, 0.14), factionMat);
+                fiber.position.set(0, railY + 0.095, railCenterZ);
+                const frontLens = new THREE.Mesh(new THREE.CircleGeometry(0.036, 12), lensMat);
+                frontLens.position.set(0, railY + 0.055, railCenterZ - 0.12);
+                group.add(base, tube, fiber, frontLens);
+            } else if (scopeType === 'sniper') {
+                const mount1 = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.04, 0.03), darkSteelMat);
+                mount1.position.set(0, railY + 0.02, railCenterZ - 0.08);
+                const mount2 = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.04, 0.03), darkSteelMat);
+                mount2.position.set(0, railY + 0.02, railCenterZ + 0.08);
+
+                const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.032, 0.44, 16), darkSteelMat);
+                tube.rotation.x = Math.PI / 2;
+                tube.position.set(0, railY + 0.065, railCenterZ);
+
+                const bell = new THREE.Mesh(new THREE.CylinderGeometry(0.048, 0.032, 0.12, 16), factionMat);
+                bell.rotation.x = Math.PI / 2;
+                bell.position.set(0, railY + 0.065, railCenterZ - 0.24);
+
+                const turret = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.025, 8), factionMat);
+                turret.position.set(0, railY + 0.105, railCenterZ);
+
+                group.add(mount1, mount2, tube, bell, turret);
+            } else { // Iron sights
+                const rear = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.035, 0.02), darkSteelMat);
+                rear.position.set(0, railY + 0.02, railCenterZ + 0.12);
+                const front = new THREE.Mesh(new THREE.BoxGeometry(0.015, 0.04, 0.02), factionMat);
+                front.position.set(0, railY + 0.02, barrelTipZ + 0.08);
+                group.add(rear, front);
+            }
+
+            // 4. MODULAR PART: TACTICAL STOCK
+            const stockType = loadout.stock || 'standard';
+            if (stockType === 'skeletal') {
+                const stock = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.14, 0.22), factionMat);
+                stock.position.set(0, -0.01, stockStartZ + 0.11);
+                group.add(stock);
+            } else if (stockType === 'heavy') {
+                const stock = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.18, 0.28), polymerMat);
+                stock.position.set(0, -0.02, stockStartZ + 0.14);
+                const riser = new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.035, 0.16), factionMat);
+                riser.position.set(0, 0.085, stockStartZ + 0.12);
+                group.add(stock, riser);
+            } else if (stockType === 'folded') {
+                const hinge = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.08, 0.04), darkSteelMat);
+                hinge.position.set(0, -0.01, stockStartZ + 0.02);
+                group.add(hinge);
+            } else { // Standard Stock
+                const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.20, 10), darkSteelMat);
+                tube.rotation.x = Math.PI / 2;
+                tube.position.set(0, 0, stockStartZ + 0.10);
+                const butt = new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.15, 0.16), polymerMat);
+                butt.position.set(0, -0.02, stockStartZ + 0.18);
+                group.add(tube, butt);
+            }
+
+            // 5. MODULAR PART: MAGAZINE
+            const magType = loadout.mag || 'standard';
+            if (magType === 'extended') {
+                const mag = new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.35, 0.09), darkSteelMat);
+                mag.position.set(0, magY - 0.06, magZ - 0.02);
+                mag.rotation.x = 0.25;
+                group.add(mag);
+            } else if (magType === 'drum') {
+                const neck = new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.08, 0.07), darkSteelMat);
+                neck.position.set(0, magY, magZ);
+                const drum = new THREE.Mesh(new THREE.CylinderGeometry(0.10, 0.10, 0.09, 16), factionMat);
+                drum.rotation.z = Math.PI / 2;
+                drum.position.set(0, magY - 0.09, magZ - 0.02);
+                group.add(neck, drum);
+            } else { // Standard Mag
+                const mag = new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.22, 0.085), polymerMat);
+                mag.position.set(0, magY, magZ);
+                mag.rotation.x = 0.2;
+                group.add(mag);
+            }
+
+            // 6. MODULAR PART: HANDLE / FOREGRIP
+            const handleType = loadout.handle || 'none';
+            if (handleType === 'vertical') {
+                const grip = new THREE.Mesh(new THREE.CylinderGeometry(0.020, 0.022, 0.16, 10), darkSteelMat);
+                grip.position.set(0, handleY - 0.08, handleZ);
+                group.add(grip);
+            } else if (handleType === 'angled') {
+                const grip = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.07, 0.15), factionMat);
+                grip.position.set(0, handleY - 0.03, handleZ);
+                grip.rotation.x = -0.4;
+                group.add(grip);
+            } else if (handleType === 'stubby') {
+                const grip = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.018, 0.09, 10), polymerMat);
+                grip.position.set(0, handleY - 0.045, handleZ);
+                group.add(grip);
+            } else { // Standard lower rail
+                const rail = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.015, 0.20), darkSteelMat);
+                rail.position.set(0, handleY, handleZ);
+                group.add(rail);
+            }
+
+            // Enable shadows on all child meshes
+            group.traverse(child => {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            });
 
             return group;
         }
 
-        customGunMesh = createProceduralWeapon('m4a1');
-        gunGroup.add(customGunMesh);
+        function rebuildWeaponMesh() {
+            gunGroup.clear();
+            customGunMesh = createProceduralWeapon(currentLoadout.gun, currentLoadout);
+            gunGroup.add(customGunMesh);
+        }
+
+        rebuildWeaponMesh();
         gunGroup.position.set(0.2, -0.22, -0.4);
 
         class Bot {
@@ -765,26 +1268,41 @@
 
             buildMesh() {
                 this.mesh.clear();
+                // Torso / Body (ends at y = 1.30)
                 const body = new THREE.Mesh(
-                    new THREE.CylinderGeometry(0.6, 0.6, 1.8, 12),
+                    new THREE.CylinderGeometry(0.55, 0.50, 1.30, 12),
                     new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.4 })
                 );
-                body.position.y = 0.9;
+                body.position.y = 0.65;
                 body.castShadow = true;
+                body.userData.isHead = false;
 
-                const head = new THREE.Mesh(
-                    new THREE.BoxGeometry(0.5, 0.4, 0.5),
-                    new THREE.MeshStandardMaterial({ color: 0x1e293b })
+                // Tactical Neck Joint
+                const neck = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.20, 0.22, 0.10, 8),
+                    new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.5 })
                 );
-                head.position.set(0, 1.6, 0);
+                neck.position.set(0, 1.33, 0);
+                neck.userData.isHead = false;
 
+                // Armored Head Unit (y = 1.35 to 1.78)
+                const head = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.48, 0.42, 0.48),
+                    new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.3, metalness: 0.4 })
+                );
+                head.position.set(0, 1.56, 0);
+                head.castShadow = true;
+                head.userData.isHead = true;
+
+                // Glowing Cyan Visor Sensor
                 const visor = new THREE.Mesh(
-                    new THREE.BoxGeometry(0.4, 0.15, 0.1),
+                    new THREE.BoxGeometry(0.42, 0.15, 0.12),
                     new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
                 );
-                visor.position.set(0, 1.65, -0.26);
+                visor.position.set(0, 1.60, -0.25);
+                visor.userData.isHead = true;
 
-                this.mesh.add(body, head, visor);
+                this.mesh.add(body, neck, head, visor);
             }
 
             getRandomTarget() {
@@ -833,21 +1351,30 @@
 
             takeDamage(amount, isHeadshot = false, hitPoint = null) {
                 this.health -= amount;
-                playHitmarkerSound(isHeadshot);
-                showHitmarker();
+                if (isHeadshot) {
+                    playHeadshotSound();
+                } else {
+                    playHitmarkerSound();
+                }
+                showHitmarker(isHeadshot);
 
                 if (hitPoint) {
-                    showDamagePopup(amount, hitPoint);
+                    showDamagePopup(amount, hitPoint, isHeadshot);
                 }
 
                 if (this.health <= 0) {
                     this.respawn();
                     teamScorePhantoms += 10;
+                    killCount++;
                     document.getElementById('score-phantoms').innerText = teamScorePhantoms;
+                    updateKDDisplay();
                     
-                    const points = isHeadshot ? "+100 ENEMY KILLED (+25 HEADSHOT)" : "+100 ENEMY KILLED";
+                    const points = isHeadshot ? "+150 HEADSHOT ELIMINATION (+50 BONUS)" : "+100 ENEMY KILLED";
                     showKillNotification(points);
-                    addKillFeedEntry(`PHANTOM-1 eliminated [GHOST] ${this.name}`);
+                    addKillFeedEntry(isHeadshot 
+                        ? `PHANTOM-1 [HEADSHOT] ${this.name}`
+                        : `PHANTOM-1 eliminated [GHOST] ${this.name}`
+                    );
                 }
             }
 
@@ -874,6 +1401,110 @@
         let isDead = false;
         let respawnInterval = null;
         let lastShotTime = 0;
+        let killCount = 0;
+        let deathCount = 0;
+
+        function getMaxClip() {
+            const magMod = (ATTACHMENTS.mag[currentLoadout.mag] && ATTACHMENTS.mag[currentLoadout.mag].clipMod) || 1.0;
+            return Math.round(currentWeapon.maxClip * magMod);
+        }
+
+        function updateLoadoutUI() {
+            const weapon = WEAPONS[currentWeaponKey];
+            const muzzle = ATTACHMENTS.muzzle[currentLoadout.muzzle] || ATTACHMENTS.muzzle.none;
+            const stock = ATTACHMENTS.stock[currentLoadout.stock] || ATTACHMENTS.stock.standard;
+            const mag = ATTACHMENTS.mag[currentLoadout.mag] || ATTACHMENTS.mag.standard;
+            const handle = ATTACHMENTS.handle[currentLoadout.handle] || ATTACHMENTS.handle.none;
+
+            // Sync select dropdowns
+            const opticEl = document.getElementById('optic-select');
+            if (opticEl) opticEl.value = currentLoadout.scope;
+            const muzzleEl = document.getElementById('muzzle-select');
+            if (muzzleEl) muzzleEl.value = currentLoadout.muzzle;
+            const stockEl = document.getElementById('stock-select');
+            if (stockEl) stockEl.value = currentLoadout.stock;
+            const magEl = document.getElementById('mag-select');
+            if (magEl) magEl.value = currentLoadout.mag;
+            const handleEl = document.getElementById('handle-select');
+            if (handleEl) handleEl.value = currentLoadout.handle;
+
+            // Calculate Recoil Control Score (higher is better control, 0-100)
+            const baseRecoilScore = currentWeaponKey === 'intervention' ? 28 : (currentWeaponKey === 'mp5' ? 76 : 64);
+            const totalClimbMod = (muzzle.recoilClimbMod || 1.0) * (stock.recoilClimbMod || 1.0) * (handle.recoilClimbMod || 1.0);
+            const totalKickHMod = (muzzle.recoilKickHMod || 1.0) * (handle.recoilKickHMod || 1.0);
+            const avgMod = (totalClimbMod + totalKickHMod) / 2;
+            const recoilScore = Math.min(98, Math.max(15, Math.round(baseRecoilScore / avgMod)));
+
+            // Update specs dashboard
+            document.getElementById('stat-damage').innerText = weapon.damage;
+            document.getElementById('bar-damage').style.width = `${Math.min(100, weapon.damage)}%`;
+            document.getElementById('stat-firerate').innerText = weapon.fireRate;
+            document.getElementById('bar-firerate').style.width = `${Math.min(100, (weapon.fireRate / 1000) * 100)}%`;
+            
+            const recoilEl = document.getElementById('stat-recoil');
+            if (recoilEl) recoilEl.innerText = recoilScore;
+            const barRecoil = document.getElementById('bar-recoil');
+            if (barRecoil) barRecoil.style.width = `${recoilScore}%`;
+
+            // Max clip calculation
+            const maxClip = getMaxClip();
+            ammoClip = Math.min(ammoClip, maxClip);
+            document.getElementById('ammo-clip').innerText = ammoClip;
+            document.getElementById('weapon-name-hud').innerText = weapon.name;
+            document.getElementById('ammo-reserve').innerText = ammoReserve;
+            document.getElementById('firemode-hud').innerText = currentWeaponKey === 'intervention' ? 'BOLT' : 'AUTO';
+        }
+
+        function switchWeapon(weaponKey) {
+            if (isReloading || weaponKey === currentWeaponKey) return;
+            currentWeaponKey = weaponKey;
+            currentWeapon = WEAPONS[currentWeaponKey];
+            currentLoadout.gun = weaponKey;
+
+            ammoClip = getMaxClip();
+            ammoReserve = currentWeapon.reserve;
+
+            // Rebuild weapon model
+            rebuildWeaponMesh();
+
+            // Cancel ADS on weapon swap & make gun visible
+            isADS = false;
+            gunGroup.visible = true;
+            document.getElementById('sniper-scope').style.opacity = '0';
+
+            updateLoadoutUI();
+
+            // Update loadout screen button highlights
+            document.querySelectorAll('.weapon-select-btn').forEach(b => {
+                if (b.getAttribute('data-weapon') === weaponKey) {
+                    b.classList.remove('bg-slate-900/80', 'border-slate-700');
+                    b.classList.add('bg-sky-500/20', 'border-sky-400');
+                } else {
+                    b.classList.remove('bg-sky-500/20', 'border-sky-400');
+                    b.classList.add('bg-slate-900/80', 'border-slate-700');
+                }
+            });
+        }
+
+        function triggerAutoReload() {
+            const maxClip = getMaxClip();
+            if (ammoClip <= 0 && ammoReserve > 0 && !isReloading) {
+                isReloading = true;
+                isADS = false;
+                gunGroup.visible = true;
+                document.getElementById('sniper-scope').style.opacity = '0';
+                document.getElementById('ammo-clip').innerText = 'RLD...';
+                setTimeout(() => {
+                    const needed = maxClip - ammoClip;
+                    const added = Math.min(needed, ammoReserve);
+                    ammoClip += added;
+                    ammoReserve -= added;
+                    document.getElementById('ammo-clip').innerText = ammoClip;
+                    document.getElementById('ammo-reserve').innerText = ammoReserve;
+                    isReloading = false;
+                }, 1400);
+            }
+        }
 
         const moveState = { forward: false, backward: false, left: false, right: false };
         const velocity = new THREE.Vector3();
@@ -883,8 +1514,15 @@
         const clock = new THREE.Clock();
         const raycaster = new THREE.Raycaster();
 
-        let recoilOffsetPitch = 0;
-        let recoilOffsetYaw = 0;
+        // Advanced Tactical Recoil Physics State
+        let recoilVelPitch = 0;
+        let recoilVelYaw = 0;
+        let recoilGunKickZ = 0;
+        let recoilGunRotX = 0;
+        let recoilGunRotY = 0;
+        let recoilGunRotZ = 0;
+        let continuousShots = 0;
+        let crosshairSpread = 0;
 
         let mouseSwayX = 0;
         let mouseSwayY = 0;
@@ -893,6 +1531,18 @@
         let walkTime = 0;
         let landingDip = 0;
         let cameraRoll = 0;
+
+        function updateCrosshairVisuals() {
+            const top = document.getElementById('ch-top');
+            const bottom = document.getElementById('ch-bottom');
+            const left = document.getElementById('ch-left');
+            const right = document.getElementById('ch-right');
+            const offset = 8 + crosshairSpread * 0.8;
+            if (top) top.style.transform = `translate(-50%, -${offset}px)`;
+            if (bottom) bottom.style.transform = `translate(-50%, ${offset}px)`;
+            if (left) left.style.transform = `translate(-${offset}px, -50%)`;
+            if (right) right.style.transform = `translate(${offset}px, -50%)`;
+        }
 
         function createLaserBeam(from, to, colorHex = 0x38bdf8) {
             const distance = from.distanceTo(to);
@@ -911,11 +1561,20 @@
             }, 50);
         }
 
-        function showHitmarker() {
+        function showHitmarker(isHeadshot = false) {
             const hm = document.getElementById('hitmarker');
             if (hm) {
+                const lines = hm.querySelectorAll('.hitmark-line');
+                lines.forEach(l => {
+                    l.style.backgroundColor = isHeadshot ? '#ef4444' : '#ffffff';
+                    l.style.boxShadow = isHeadshot ? '0 0 8px #ef4444' : '0 0 4px #ffffff';
+                });
+                hm.style.transform = isHeadshot ? 'translate(-50%, -50%) rotate(45deg) scale(1.35)' : 'translate(-50%, -50%) rotate(45deg) scale(1.0)';
                 hm.style.opacity = '1';
-                setTimeout(() => hm.style.opacity = '0', 120);
+                setTimeout(() => {
+                    hm.style.opacity = '0';
+                    hm.style.transform = 'translate(-50%, -50%) rotate(45deg) scale(1.0)';
+                }, 130);
             }
         }
 
@@ -928,7 +1587,7 @@
             }
         }
 
-        function showDamagePopup(amt, worldPos) {
+        function showDamagePopup(amt, worldPos, isHeadshot = false) {
             const screenPos = worldPos.clone().project(camera);
             if (screenPos.z > 1) return; // Behind camera
             const x = (screenPos.x * 0.5 + 0.5) * window.innerWidth;
@@ -936,7 +1595,15 @@
 
             const popup = document.createElement('div');
             popup.className = 'damage-popup';
-            popup.innerText = `-${amt}`;
+            if (isHeadshot) {
+                popup.innerText = `CRIT -${amt}`;
+                popup.style.color = '#ef4444';
+                popup.style.fontSize = '32px';
+                popup.style.textShadow = '0 0 10px rgba(239, 68, 68, 0.9)';
+            } else {
+                popup.innerText = `-${amt}`;
+                popup.style.color = '#fbbf24';
+            }
             popup.style.left = `${x}px`;
             popup.style.top = `${y}px`;
             document.getElementById('popups-container').appendChild(popup);
@@ -954,15 +1621,59 @@
             ammoClip--;
             document.getElementById('ammo-clip').innerText = ammoClip;
 
+            // Auto-reload when empty
+            if (ammoClip <= 0) {
+                setTimeout(() => triggerAutoReload(), 300);
+            }
+
             playGunshotSound(currentWeaponKey);
 
-            // Procedural Recoil
-            recoilOffsetPitch += currentWeapon.recoilClimb;
-            recoilOffsetYaw += (Math.random() - 0.5) * currentWeapon.recoilKick;
-            gunGroup.position.z += currentWeapon.recoilKick * 1.5;
+            // Attachment recoil modifiers
+            const muzzle = ATTACHMENTS.muzzle[currentLoadout.muzzle] || ATTACHMENTS.muzzle.none;
+            const stock = ATTACHMENTS.stock[currentLoadout.stock] || ATTACHMENTS.stock.standard;
+            const handle = ATTACHMENTS.handle[currentLoadout.handle] || ATTACHMENTS.handle.none;
+            const totalClimbMod = (muzzle.recoilClimbMod || 1.0) * (stock.recoilClimbMod || 1.0) * (handle.recoilClimbMod || 1.0);
+            const totalKickHMod = (muzzle.recoilKickHMod || 1.0) * (handle.recoilKickHMod || 1.0);
 
-            // Camera Raycast Target
-            raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+            // Advanced Recoil Physics Calculation
+            continuousShots++;
+            const sprayFactor = Math.min(2.4, 1.0 + (continuousShots * 0.05));
+            const stanceMultiplier = playerStance === 'CROUCH' ? 0.72 : (playerStance === 'PRONE' ? 0.50 : 1.0);
+            const adsMultiplier = isADS ? 0.75 : 1.0;
+
+            const climb = currentWeapon.recoilClimb * totalClimbMod * sprayFactor * stanceMultiplier * adsMultiplier;
+            const horiz = (Math.random() - 0.48) * currentWeapon.recoilKickH * totalKickHMod * sprayFactor * stanceMultiplier;
+
+            // Punch camera upwards with high-velocity impulse
+            recoilVelPitch += climb * 18.0;
+            recoilVelYaw += horiz * 15.0;
+
+            // Physical weapon kickback springs
+            recoilGunKickZ = Math.min(0.35, recoilGunKickZ + currentWeapon.gunKickZ);
+            recoilGunRotX = Math.min(0.65, recoilGunRotX + currentWeapon.gunRotX * totalClimbMod);
+            recoilGunRotZ += (Math.random() - 0.5) * 0.08;
+            recoilGunRotY += (Math.random() - 0.5) * 0.04;
+
+            // Dynamic Crosshair Bloom
+            crosshairSpread = Math.min(38, crosshairSpread + (currentWeaponKey === 'intervention' ? 26 : 7) * totalClimbMod);
+
+            // Scoped visual kick for sniper overlay
+            const isSniperOverlay = ATTACHMENTS.scope[currentLoadout.scope]?.useSniperOverlay;
+            if (isADS && isSniperOverlay) {
+                const scopeEl = document.getElementById('sniper-scope');
+                if (scopeEl) {
+                    scopeEl.style.transform = `scale(1.08) translate(${(Math.random() - 0.5) * 24}px, -32px)`;
+                    setTimeout(() => {
+                        scopeEl.style.transform = 'scale(1) translate(0, 0)';
+                    }, 130);
+                }
+            }
+
+            // Camera Raycast Target with dynamic spray spread
+            const spreadRad = (crosshairSpread * 0.0008) * (isADS ? 0.15 : 1.0);
+            const spreadOffsetX = (Math.random() - 0.5) * spreadRad;
+            const spreadOffsetY = (Math.random() - 0.5) * spreadRad;
+            raycaster.setFromCamera(new THREE.Vector2(spreadOffsetX, spreadOffsetY), camera);
             const botMeshes = bots.map(b => b.mesh);
             const intersects = raycaster.intersectObjects([...collidableObjects, ...botMeshes], true);
 
@@ -980,7 +1691,7 @@
                     b.mesh.traverse(child => {
                         if (child === hit.object) {
                             hitBot = b;
-                            if (child.geometry && child.geometry.type === 'BoxGeometry' && child.position.y > 1.2) {
+                            if (child.userData && child.userData.isHead) {
                                 isHeadshot = true;
                             }
                         }
@@ -988,7 +1699,12 @@
                 });
 
                 if (hitBot) {
-                    const dmg = isHeadshot ? Math.round(currentWeapon.damage * 1.5) : currentWeapon.damage;
+                    const hitHeight = hit.point.y - hitBot.mesh.position.y;
+                    if (hitHeight >= 1.32) {
+                        isHeadshot = true;
+                    }
+                    const baseDmg = currentWeapon.damage;
+                    const dmg = isHeadshot ? Math.round(baseDmg * 2.2) : baseDmg;
                     hitBot.takeDamage(dmg, isHeadshot, hit.point);
                 }
             } else {
@@ -1010,6 +1726,8 @@
 
             if (health <= 0 && !isDead) {
                 isDead = true;
+                deathCount++;
+                updateKDDisplay();
                 controls.unlock();
                 
                 document.getElementById('loadout-screen').classList.add('opacity-0', 'pointer-events-none');
@@ -1048,13 +1766,16 @@
         function triggerRespawn() {
             isDead = false;
             health = 100;
-            ammoClip = currentWeapon.maxClip;
+            ammoClip = getMaxClip();
             ammoReserve = currentWeapon.reserve;
             document.getElementById('hp-bar').style.width = '100%';
             document.getElementById('hp-text').innerText = '100 HP';
             document.getElementById('ammo-clip').innerText = ammoClip;
             document.getElementById('ammo-reserve').innerText = ammoReserve;
             controls.getObject().position.set(0, 1.6, 40);
+            isADS = false;
+            gunGroup.visible = true;
+            document.getElementById('sniper-scope').style.opacity = '0';
             
             document.getElementById('respawn-screen').classList.add('hidden');
             controls.lock();
@@ -1077,37 +1798,115 @@
             setTimeout(() => entry.remove(), 4000);
         }
 
-        document.querySelectorAll('.weapon-select-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                document.querySelectorAll('.weapon-select-btn').forEach(b => {
-                    b.classList.remove('bg-sky-500/20', 'border-sky-400');
-                    b.classList.add('bg-slate-900/80', 'border-slate-700');
-                });
-                const target = e.currentTarget;
-                target.classList.remove('bg-slate-900/80', 'border-slate-700');
-                target.classList.add('bg-sky-500/20', 'border-sky-400');
+        function updateKDDisplay() {
+            const el = document.getElementById('kd-display');
+            if (el) el.innerText = `${killCount} / ${deathCount}`;
+        }
 
-                currentWeaponKey = target.getAttribute('data-weapon');
-                currentWeapon = WEAPONS[currentWeaponKey];
-                ammoClip = currentWeapon.maxClip;
-                ammoReserve = currentWeapon.reserve;
+        function getCardinalDirection(deg) {
+            const dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+            const idx = Math.round(deg / 45) % 8;
+            return dirs[idx];
+        }
 
-                document.getElementById('weapon-name-hud').innerText = currentWeapon.name;
-                document.getElementById('ammo-clip').innerText = ammoClip;
-                document.getElementById('ammo-reserve').innerText = ammoReserve;
+        // Modular Attachments Event Listeners
+        ['optic-select', 'muzzle-select', 'stock-select', 'mag-select', 'handle-select'].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('change', (e) => {
+                const val = e.target.value;
+                if (id === 'optic-select') currentLoadout.scope = val;
+                if (id === 'muzzle-select') currentLoadout.muzzle = val;
+                if (id === 'stock-select') currentLoadout.stock = val;
+                if (id === 'mag-select') {
+                    currentLoadout.mag = val;
+                    ammoClip = getMaxClip();
+                }
+                if (id === 'handle-select') currentLoadout.handle = val;
 
-                // Update Stats
-                document.getElementById('stat-damage').innerText = currentWeapon.damage;
-                document.getElementById('stat-firerate').innerText = currentWeapon.fireRate;
-                document.getElementById('bar-damage').style.width = `${currentWeapon.damage}%`;
-                document.getElementById('bar-firerate').style.width = `${(currentWeapon.fireRate / 1000) * 100}%`;
-
-                // Rebuild weapon
-                gunGroup.clear();
-                customGunMesh = createProceduralWeapon(currentWeaponKey);
-                gunGroup.add(customGunMesh);
+                rebuildWeaponMesh();
+                updateLoadoutUI();
             });
         });
+
+        document.querySelectorAll('.weapon-select-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const weaponKey = e.currentTarget.getAttribute('data-weapon');
+                switchWeapon(weaponKey);
+            });
+        });
+
+        function toggleSettingsModal() {
+            const panel = document.getElementById('settings-panel');
+            if (!panel) return;
+            const isHidden = panel.classList.contains('hidden');
+            if (isHidden) {
+                // Refresh UI with active settings
+                document.getElementById('setting-fov').value = gameSettings.fov;
+                document.getElementById('val-setting-fov').innerText = `${gameSettings.fov}°`;
+                document.getElementById('setting-volume').value = Math.round(gameSettings.volume * 100);
+                document.getElementById('val-setting-volume').innerText = `${Math.round(gameSettings.volume * 100)}%`;
+                document.getElementById('setting-sens').value = gameSettings.sensitivity;
+                document.getElementById('val-setting-sens').innerText = `${gameSettings.sensitivity.toFixed(2)}x`;
+                panel.classList.remove('hidden');
+                controls.unlock();
+            } else {
+                panel.classList.add('hidden');
+            }
+        }
+
+        document.getElementById('setting-fov').addEventListener('input', (e) => {
+            const val = parseInt(e.target.value);
+            gameSettings.fov = val;
+            document.getElementById('val-setting-fov').innerText = `${val}°`;
+            camera.fov = val;
+            camera.updateProjectionMatrix();
+            saveSettings();
+        });
+
+        document.getElementById('setting-volume').addEventListener('input', (e) => {
+            const val = parseInt(e.target.value);
+            setMasterVolume(val / 100);
+            document.getElementById('val-setting-volume').innerText = `${val}%`;
+            saveSettings();
+        });
+
+        document.getElementById('setting-sens').addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            gameSettings.sensitivity = val;
+            document.getElementById('val-setting-sens').innerText = `${val.toFixed(2)}x`;
+            saveSettings();
+        });
+
+        document.getElementById('test-audio-btn').addEventListener('click', () => {
+            initAudioContext();
+            setMasterVolume(parseInt(document.getElementById('setting-volume').value) / 100);
+            playGunshotSound('intervention');
+        });
+
+        document.getElementById('reset-settings-btn').addEventListener('click', () => {
+            gameSettings = Object.assign({}, defaultSettings);
+            document.getElementById('setting-fov').value = defaultSettings.fov;
+            document.getElementById('val-setting-fov').innerText = `${defaultSettings.fov}°`;
+            document.getElementById('setting-volume').value = Math.round(defaultSettings.volume * 100);
+            document.getElementById('val-setting-volume').innerText = `${Math.round(defaultSettings.volume * 100)}%`;
+            document.getElementById('setting-sens').value = defaultSettings.sensitivity;
+            document.getElementById('val-setting-sens').innerText = `${defaultSettings.sensitivity.toFixed(2)}x`;
+            setMasterVolume(defaultSettings.volume);
+            camera.fov = defaultSettings.fov;
+            camera.updateProjectionMatrix();
+            saveSettings();
+        });
+
+        document.getElementById('close-settings-btn').addEventListener('click', () => {
+            document.getElementById('settings-panel').classList.add('hidden');
+        });
+        document.getElementById('save-close-settings-btn').addEventListener('click', () => {
+            document.getElementById('settings-panel').classList.add('hidden');
+        });
+
+        document.getElementById('open-settings-btn').addEventListener('click', () => toggleSettingsModal());
+        document.getElementById('open-settings-loadout-btn').addEventListener('click', () => toggleSettingsModal());
 
         document.getElementById('deploy-btn').addEventListener('click', () => controls.lock());
         document.getElementById('open-loadout-btn').addEventListener('click', () => controls.unlock());
@@ -1136,7 +1935,28 @@
                 controls.unlock();
                 return;
             }
+            if (e.code === 'KeyO') {
+                toggleSettingsModal();
+                return;
+            }
+            if (e.code === 'Escape') {
+                const settingsPanel = document.getElementById('settings-panel');
+                if (settingsPanel && !settingsPanel.classList.contains('hidden')) {
+                    settingsPanel.classList.add('hidden');
+                    return;
+                }
+                const customizer = document.getElementById('customizer-panel');
+                if (customizer && !customizer.classList.contains('hidden')) {
+                    customizer.classList.add('hidden');
+                    return;
+                }
+            }
             if (!controls.isLocked) return;
+
+            // Quick weapon swap with number keys
+            if (e.code === 'Digit1') { switchWeapon('m4a1'); return; }
+            if (e.code === 'Digit2') { switchWeapon('intervention'); return; }
+            if (e.code === 'Digit3') { switchWeapon('mp5'); return; }
 
             switch (e.code) {
                 case 'KeyW': moveState.forward = true; break;
@@ -1144,36 +1964,52 @@
                 case 'KeyA': moveState.left = true; break;
                 case 'KeyD': moveState.right = true; break;
                 case 'ShiftLeft':
-                    if (playerStance === 'STAND') isSprinting = true;
+                    if (playerStance === 'STAND') {
+                        isSprinting = true;
+                        // Sprint cancels ADS
+                        isADS = false;
+                        gunGroup.visible = true;
+                        document.getElementById('sniper-scope').style.opacity = '0';
+                    }
                     break;
                 case 'KeyC':
                 case 'ControlLeft':
+                    if (!isGrounded) break; // Cannot crouch in air
                     playerStance = playerStance === 'CROUCH' ? 'STAND' : 'CROUCH';
                     document.getElementById('stance-indicator').innerText = playerStance;
                     break;
                 case 'KeyZ':
+                    if (!isGrounded) break; // Cannot prone in air
                     playerStance = playerStance === 'PRONE' ? 'STAND' : 'PRONE';
                     document.getElementById('stance-indicator').innerText = playerStance;
                     break;
                 case 'Space':
-                    if (canJump) {
-                        velocity.y += (isSprinting ? 12.5 : 11.0);
-                        canJump = false;
-                        isGrounded = false;
-                        landingDip = -0.12;
-                        
+                    if (canJump && isGrounded) {
+                        const playerObj = controls.getObject();
+                        // Cancel crouching or proning when jumping
                         if (playerStance !== 'STAND') {
+                            const curEyeH = playerStance === 'CROUCH' ? 1.0 : 0.4;
+                            // Immediately restore standing eye level relative to ground
+                            playerObj.position.y += (1.6 - curEyeH);
                             playerStance = 'STAND';
                             document.getElementById('stance-indicator').innerText = 'STAND';
                         }
+                        velocity.y = (isSprinting ? 12.5 : 11.0);
+                        canJump = false;
+                        isGrounded = false;
+                        landingDip = -0.12;
                     }
                     break;
                 case 'KeyR':
-                    if (ammoClip < currentWeapon.maxClip && ammoReserve > 0 && !isReloading) {
+                    const maxClip = getMaxClip();
+                    if (ammoClip < maxClip && ammoReserve > 0 && !isReloading) {
                         isReloading = true;
+                        isADS = false;
+                        gunGroup.visible = true;
+                        document.getElementById('sniper-scope').style.opacity = '0';
                         document.getElementById('ammo-clip').innerText = 'RLD...';
                         setTimeout(() => {
-                            const needed = currentWeapon.maxClip - ammoClip;
+                            const needed = maxClip - ammoClip;
                             const added = Math.min(needed, ammoReserve);
                             ammoClip += added;
                             ammoReserve -= added;
@@ -1204,8 +2040,13 @@
             }
             if (e.button === 2) {
                 isADS = true;
-                if (currentWeaponKey === 'intervention') {
+                const scopeConfig = ATTACHMENTS.scope[currentLoadout.scope] || ATTACHMENTS.scope.iron;
+                if (scopeConfig.useSniperOverlay) {
                     document.getElementById('sniper-scope').style.opacity = '1';
+                    gunGroup.visible = false;
+                } else {
+                    document.getElementById('sniper-scope').style.opacity = '0';
+                    gunGroup.visible = true;
                 }
             }
         });
@@ -1215,6 +2056,7 @@
             if (e.button === 2) {
                 isADS = false;
                 document.getElementById('sniper-scope').style.opacity = '0';
+                gunGroup.visible = true;
             }
         });
 
@@ -1315,9 +2157,7 @@
         });
 
         document.getElementById('reset-gun-btn').addEventListener('click', () => {
-            gunGroup.clear();
-            customGunMesh = createProceduralWeapon(currentWeaponKey);
-            gunGroup.add(customGunMesh);
+            rebuildWeaponMesh();
             gunScale.value = 1.0;
             gunPosX.value = 0.2;
             gunPosY.value = -0.22;
@@ -1359,19 +2199,19 @@
                 const sprintCarryAngle = (isSprinting && horizSpeed > 2 && !isADS) ? Math.PI / 7 : 0;
                 const sprintCarryX = (isSprinting && horizSpeed > 2 && !isADS) ? 0.05 : 0;
 
-                // Base gun position
+                // Base gun position with physical recoil displacement
                 const baseGunX = (isADS ? 0 : (parseFloat(gunPosX.value) || 0.2)) + sprintCarryX;
                 const baseGunY = (isADS ? -0.1 : (parseFloat(gunPosY.value) || -0.22)) + landingDip;
-                const baseGunZ = isADS ? -0.25 : (parseFloat(gunPosZ.value) || -0.4);
+                const baseGunZ = (isADS ? -0.25 : (parseFloat(gunPosZ.value) || -0.4)) + recoilGunKickZ;
 
-                gunGroup.position.x = THREE.MathUtils.lerp(gunGroup.position.x, baseGunX + bobX - mouseSwayX, delta * 12);
-                gunGroup.position.y = THREE.MathUtils.lerp(gunGroup.position.y, baseGunY + bobY - mouseSwayY, delta * 12);
-                gunGroup.position.z = THREE.MathUtils.lerp(gunGroup.position.z, baseGunZ, delta * 10);
+                gunGroup.position.x = THREE.MathUtils.lerp(gunGroup.position.x, baseGunX + bobX - mouseSwayX, delta * 14);
+                gunGroup.position.y = THREE.MathUtils.lerp(gunGroup.position.y, baseGunY + bobY - mouseSwayY + (recoilGunRotX * 0.08), delta * 14);
+                gunGroup.position.z = THREE.MathUtils.lerp(gunGroup.position.z, baseGunZ, delta * 16);
 
-                // Gun rotations
-                gunGroup.rotation.z = THREE.MathUtils.lerp(gunGroup.rotation.z, -bobX * 1.5 - mouseSwayX * 2.2 + cameraRoll * 0.8, delta * 12);
-                gunGroup.rotation.y = THREE.MathUtils.lerp(gunGroup.rotation.y, mouseSwayX * 1.5 + Math.sin(walkTime) * 0.03 - sprintCarryAngle * 0.6, delta * 12);
-                gunGroup.rotation.x = THREE.MathUtils.lerp(gunGroup.rotation.x, mouseSwayY * 1.5 + Math.cos(walkTime * 2) * 0.02 + sprintCarryAngle, delta * 12);
+                // Gun rotations with recoil flip and twist
+                gunGroup.rotation.z = THREE.MathUtils.lerp(gunGroup.rotation.z, -bobX * 1.5 - mouseSwayX * 2.2 + cameraRoll * 0.8 + recoilGunRotZ, delta * 14);
+                gunGroup.rotation.y = THREE.MathUtils.lerp(gunGroup.rotation.y, mouseSwayX * 1.5 + Math.sin(walkTime) * 0.03 - sprintCarryAngle * 0.6 + recoilGunRotY, delta * 14);
+                gunGroup.rotation.x = THREE.MathUtils.lerp(gunGroup.rotation.x, mouseSwayY * 1.5 + Math.cos(walkTime * 2) * 0.02 + sprintCarryAngle + recoilGunRotX, delta * 16);
 
                 // Landing Dip Damping
                 landingDip = THREE.MathUtils.lerp(landingDip, 0, delta * 8);
@@ -1381,12 +2221,22 @@
                 cameraRoll = THREE.MathUtils.lerp(cameraRoll, targetRoll, delta * 8);
                 camera.rotation.z = cameraRoll;
 
-                // Dynamic FOV for Sprinting and ADS
-                let targetFOV = 78;
+                // Sniper Scope Visibility Guard: hide 3D weapon when scoped so scope parts never block overlay
+                const isSniperOverlay = ATTACHMENTS.scope[currentLoadout.scope]?.useSniperOverlay;
+                if (isADS && isSniperOverlay) {
+                    gunGroup.visible = false;
+                } else {
+                    gunGroup.visible = true;
+                }
+
+                // Dynamic FOV for Sprinting and ADS based on User Setting and Equipped Optic
+                const baseFOV = gameSettings.fov || 78;
+                let targetFOV = baseFOV;
+                const scopeConfig = ATTACHMENTS.scope[currentLoadout.scope] || ATTACHMENTS.scope.iron;
                 if (isADS) {
-                    targetFOV = currentWeaponKey === 'intervention' ? 25 : 48;
+                    targetFOV = baseFOV * (scopeConfig.fovMultiplier || 0.7);
                 } else if (isSprinting && horizSpeed > 2) {
-                    targetFOV = 90;
+                    targetFOV = baseFOV + 12;
                 }
                 camera.fov = THREE.MathUtils.lerp(camera.fov, targetFOV, delta * 10);
                 camera.updateProjectionMatrix();
@@ -1394,18 +2244,37 @@
                 // Crosshair spread & opacity
                 const ch = document.getElementById('crosshair');
                 if (ch) ch.style.opacity = isADS ? '0' : '1';
+                updateCrosshairVisuals();
 
-                // Recoil Recovery
-                recoilOffsetPitch *= 0.85;
-                recoilOffsetYaw *= 0.85;
-                controls.pitchObject.rotation.x += recoilOffsetPitch * 0.05;
-                controls.yawObject.rotation.y += recoilOffsetYaw * 0.05;
+                // Camera Recoil Physics Application (Kick & Climb)
+                const pitchDelta = recoilVelPitch * delta;
+                const yawDelta = recoilVelYaw * delta;
+                controls.pitchObject.rotation.x = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, controls.pitchObject.rotation.x + pitchDelta));
+                controls.yawObject.rotation.y += yawDelta;
+
+                // Recoil Impulse Decay (demands player counter-steer to manage muzzle climb)
+                recoilVelPitch = THREE.MathUtils.lerp(recoilVelPitch, 0, delta * 22);
+                recoilVelYaw = THREE.MathUtils.lerp(recoilVelYaw, 0, delta * 22);
+
+                // Decay Weapon Physical Kick Springs
+                recoilGunKickZ = THREE.MathUtils.lerp(recoilGunKickZ, 0, delta * 12);
+                recoilGunRotX = THREE.MathUtils.lerp(recoilGunRotX, 0, delta * 15);
+                recoilGunRotY = THREE.MathUtils.lerp(recoilGunRotY, 0, delta * 14);
+                recoilGunRotZ = THREE.MathUtils.lerp(recoilGunRotZ, 0, delta * 14);
+
+                // Crosshair spread & spray recovery
+                crosshairSpread = THREE.MathUtils.lerp(crosshairSpread, 0, delta * 9);
+                if (!window.isMouseDown) {
+                    continuousShots = Math.max(0, continuousShots - delta * 35);
+                }
 
                 // Stance Heights
                 let targetEyeHeight = 1.6;
                 if (playerStance === 'CROUCH') targetEyeHeight = 1.0;
                 if (playerStance === 'PRONE') targetEyeHeight = 0.4;
-                controls.getObject().position.y += (targetEyeHeight - controls.getObject().position.y) * 0.15;
+                if (isGrounded) {
+                    controls.getObject().position.y += (targetEyeHeight - controls.getObject().position.y) * 0.15;
+                }
 
                 // Movement physics
                 velocity.x -= velocity.x * 10.0 * delta;
@@ -1416,13 +2285,15 @@
                 direction.x = Number(moveState.right) - Number(moveState.left);
                 direction.normalize();
 
-                const baseSpeed = isSprinting ? 115.0 : (playerStance === 'CROUCH' ? 38.0 : 62.0);
+                const stockSpeedMod = ATTACHMENTS.stock[currentLoadout.stock]?.speedMod || 1.0;
+                const baseSpeed = (isSprinting ? 115.0 : (playerStance === 'CROUCH' ? 38.0 : 62.0)) * stockSpeedMod;
                 if (moveState.forward || moveState.backward) velocity.z -= direction.z * baseSpeed * delta;
                 if (moveState.left || moveState.right) velocity.x -= direction.x * baseSpeed * delta;
 
                 const playerObj = controls.getObject();
                 playerObj.translateX(-velocity.x * delta);
                 playerObj.translateZ(velocity.z * delta);
+                playerObj.position.y += velocity.y * delta;
 
                 // Floor collision and Landing Dip kick
                 if (playerObj.position.y < targetEyeHeight) {
@@ -1443,7 +2314,7 @@
                 // Compass Direction Update
                 const degrees = Math.round((THREE.MathUtils.radToDeg(controls.yawObject.rotation.y) % 360 + 360) % 360);
                 const compassEl = document.getElementById('compass-dir');
-                if (compassEl) compassEl.innerText = `N ${String(degrees).padStart(3, '0')}°`;
+                if (compassEl) compassEl.innerText = `${getCardinalDirection(degrees)} ${String(degrees).padStart(3, '0')}°`;
 
                 // Update Bot AI State
                 bots.forEach(bot => bot.update(delta, playerObj.position));
@@ -1453,6 +2324,16 @@
         }
 
         window.onload = () => {
+            const fovEl = document.getElementById('setting-fov');
+            if (fovEl) {
+                fovEl.value = gameSettings.fov;
+                document.getElementById('val-setting-fov').innerText = `${gameSettings.fov}°`;
+                document.getElementById('setting-volume').value = Math.round(gameSettings.volume * 100);
+                document.getElementById('val-setting-volume').innerText = `${Math.round(gameSettings.volume * 100)}%`;
+                document.getElementById('setting-sens').value = gameSettings.sensitivity;
+                document.getElementById('val-setting-sens').innerText = `${gameSettings.sensitivity.toFixed(2)}x`;
+            }
+            updateLoadoutUI();
             animate();
         };
     </script>
