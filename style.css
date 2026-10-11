@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Teko:wght@400;600;700&family=Chakra+Petch:wght@500;700;800&display=swap');
+        
+        body {
+            margin: 0;
+            overflow: hidden;
+            user-select: none;
+            background-color: #030712;
+            font-family: 'Chakra Petch', sans-serif;
+        }
+
+        .pf-title {
+            font-family: 'Teko', sans-serif;
+            text-shadow: 0 0 20px rgba(14, 165, 233, 0.6);
+        }
+
+        .pf-clip-hud {
+            clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+        }
+
+        .pf-clip-btn {
+            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+        }
+
+        .pf-panel {
+            background: rgba(10, 15, 26, 0.88);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            backdrop-filter: blur(12px);
+        }
+
+        #crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 20;
+            transition: opacity 0.15s ease, width 0.1s ease, height 0.1s ease;
+        }
+
+        .ch-line {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+        }
+
+        #hitmarker {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
+            pointer-events: none;
+            z-index: 25;
+            opacity: 0;
+            transition: opacity 0.05s ease;
+        }
+
+        .hitmark-line {
+            position: absolute;
+            background-color: #ef4444;
+            box-shadow: 0 0 6px #f87171;
+        }
+
+        /* Scope overlay for sniper rifles */
+        #sniper-scope {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 28;
+            opacity: 0;
+            transition: opacity 0.1s ease;
+            background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.85) 31%, black 36%, black 100%);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(14, 165, 233, 0.5);
+            border-radius: 4px;
+        }
+
+        .drop-zone--active {
+            border-color: #38bdf8 !important;
+            background-color: rgba(14, 165, 233, 0.18) !important;
+        }
+
+        .damage-popup {
+            position: absolute;
+            font-family: 'Teko', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            color: #fbbf24;
+            text-shadow: 0 0 8px rgba(0,0,0,0.9);
+            pointer-events: none;
+            z-index: 30;
+            animation: floatUp 0.8s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -40px) scale(1.2); }
+        }
