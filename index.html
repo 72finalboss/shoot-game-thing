@@ -3,492 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phantom Forces 3D - Tactical FPS Engine</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-    
+    <title>Tactical Ops 3D</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="relative w-screen h-screen">
+<body>
 
-	<!-- Loading Screen Overlay -->
-    <div id="loading-screen" class="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center text-white z-50 transition-opacity duration-500">
-        <div class="pf-panel pf-clip-hud p-8 max-w-md w-full text-center space-y-6 border-sky-500/50 shadow-[0_0_30px_rgba(56,189,248,0.3)]">
-            <div class="text-sky-400 font-extrabold text-xs tracking-[0.3em] uppercase">PHANTOM FORCES 3D ENGINE</div>
-            <h2 class="pf-title text-4xl font-black text-sky-400 tracking-wider">LOADING ASSETS</h2>
+    <!-- Main Menu -->
+    <div id="main-menu">
+        <h1 class="pf-title">TACTICAL OPS</h1>
+        <button id="btn-play" class="menu-btn">DEPLOY</button>
+        <button id="btn-loadout" class="menu-btn">LOADOUT</button>
+        <button id="btn-settings-menu" class="menu-btn">SETTINGS</button>
+    </div>
+
+    <!-- Loadout Screen -->
+    <div id="loadout-screen" class="hidden">
+        <div class="loadout-left">
+            <h2 class="section-title">WEAPON LOADOUT</h2>
             
-            <div class="w-full bg-slate-900 h-2.5 rounded overflow-hidden border border-slate-700/80 p-0.5">
-                <div id="loading-bar" class="h-full bg-gradient-to-r from-sky-500 to-cyan-400 transition-all duration-200" style="width: 0%;"></div>
+            <div class="weapon-selectors">
+                <button class="weapon-select-btn active" data-weapon="m4a1">M4A1</button>
+                <button class="weapon-select-btn" data-weapon="AWP">AWP</button>
+                <button class="weapon-select-btn" data-weapon="mp5">MP5</button>
             </div>
-            
-            <div id="loading-status" class="text-xs font-mono text-slate-400">Connecting to tactical asset server...</div>
-            
-            <!-- Gun Model Credits -->
-            <div class="pt-4 border-t border-slate-800 text-[11px] font-mono text-slate-400 leading-relaxed">
-                Gun Models made by <span class="text-sky-300 font-bold">D_U</span>, licensed under <span class="text-sky-300 font-bold">Creative Commons Attribution</span>
+
+            <div class="attachment-selectors">
+                <div class="select-group">
+                    <label>OPTIC</label>
+                    <select id="optic-select">
+                        <option value="iron">Iron Sights</option>
+                        <option value="reddot">Red Dot Sight</option>
+                        <option value="acog">ACOG 4x Scope</option>
+                        <option value="sniper">8x Sniper Scope</option>
+                    </select>
+                </div>
+                <div class="select-group">
+                    <label>MUZZLE</label>
+                    <select id="muzzle-select">
+                        <option value="none">Standard Flash Hider</option>
+                        <option value="suppressor">Tactical Suppressor</option>
+                        <option value="compensator">Recoil Compensator</option>
+                        <option value="brake">Heavy Muzzle Brake</option>
+                    </select>
+                </div>
+                <div class="select-group">
+                    <label>STOCK</label>
+                    <select id="stock-select">
+                        <option value="standard">Standard Stock</option>
+                        <option value="skeletal">Skeletal Minimalist</option>
+                        <option value="heavy">Heavy Sniper Stock</option>
+                        <option value="folded">CQB Folded</option>
+                    </select>
+                </div>
+                <div class="select-group">
+                    <label>MAGAZINE</label>
+                    <select id="mag-select">
+                        <option value="standard">Standard Mag</option>
+                        <option value="extended">Extended Mag (+50%)</option>
+                        <option value="drum">Drum Mag (+100%)</option>
+                    </select>
+                </div>
+                <div class="select-group">
+                    <label>GRIP</label>
+                    <select id="handle-select">
+                        <option value="none">None</option>
+                        <option value="vertical">Vertical Foregrip</option>
+                        <option value="angled">Angled Grip</option>
+                        <option value="stubby">Stubby Grip</option>
+                    </select>
+                </div>
             </div>
+
+            <button id="btn-back-loadout" class="menu-btn small">BACK</button>
+        </div>
+        <div class="loadout-right">
+            <div id="loadout-viewer"></div>
         </div>
     </div>
 
-    <!-- Red Dot / ACOG ADS reticles (replace the 3D optic while aiming) -->
-    <div id="reticle-reddot" style="position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:#ef4444;box-shadow:0 0 8px 2px rgba(239,68,68,0.9);pointer-events:none;z-index:28;opacity:0;transition:opacity 0.1s ease;"></div>
-    <div id="reticle-acog" style="position:absolute;left:50%;top:50%;width:70px;height:70px;margin:-35px 0 0 -35px;pointer-events:none;z-index:28;opacity:0;transition:opacity 0.1s ease;">
-        <svg viewBox="0 0 70 70" width="70" height="70" style="filter:drop-shadow(0 0 3px rgba(239,68,68,0.9));">
-            <path d="M35 33 L27 45 M35 33 L43 45" stroke="#ef4444" stroke-width="2" fill="none" stroke-linecap="round"/>
-            <circle cx="35" cy="35" r="1.6" fill="#ef4444"/>
-            <path d="M35 8 V22 M35 48 V62 M8 35 H22 M48 35 H62" stroke="#ef4444" stroke-width="1" opacity="0.55"/>
-        </svg>
-    </div>
-
-    <!-- Leaderboard (hold TAB) -->
-    <div id="leaderboard" class="hidden absolute inset-0 flex items-center justify-center pointer-events-none text-white" style="z-index:45;">
-        <div class="pf-panel w-[min(720px,92vw)] p-5 shadow-2xl">
-            <div class="flex items-center justify-between mb-3">
-                <div class="text-lg font-black tracking-widest text-sky-400">LEADERBOARD</div>
-                <div class="flex items-center gap-4 font-mono text-sm">
-                    <span class="text-sky-400 font-bold">PHANTOMS <span id="lb-team-phantoms">0</span></span>
-                    <span class="text-slate-500">VS</span>
-                    <span class="text-orange-400 font-bold">GHOSTS <span id="lb-team-ghosts">0</span></span>
+    <!-- Settings Screen -->
+    <div id="settings-screen" class="hidden">
+        <div class="settings-panel">
+            <h2 class="section-title">SETTINGS</h2>
+            <div class="setting-row">
+                <label>FIELD OF VIEW</label>
+                <div class="setting-control">
+                    <input type="range" id="setting-fov" min="60" max="110" value="78">
+                    <span id="val-setting-fov">78°</span>
                 </div>
             </div>
-            <table class="w-full font-mono text-sm">
+            <div class="setting-row">
+                <label>MASTER VOLUME</label>
+                <div class="setting-control">
+                    <input type="range" id="setting-volume" min="0" max="100" value="100">
+                    <span id="val-setting-volume">100%</span>
+                </div>
+            </div>
+            <div class="setting-row">
+                <label>MOUSE SENSITIVITY</label>
+                <div class="setting-control">
+                    <input type="range" id="setting-sens" min="0.1" max="3.0" step="0.05" value="1.0">
+                    <span id="val-setting-sens">1.00x</span>
+                </div>
+            </div>
+            <button id="btn-back-settings" class="menu-btn small">BACK</button>
+        </div>
+    </div>
+
+    <!-- In-Game HUD -->
+    <div id="hud" class="hidden">
+        <div id="crosshair">
+            <div id="ch-top" class="ch-line" style="width: 2px; height: 12px; left: 50%; top: 0; transform: translate(-50%, -8px);"></div>
+            <div id="ch-bottom" class="ch-line" style="width: 2px; height: 12px; left: 50%; bottom: 0; transform: translate(-50%, 8px);"></div>
+            <div id="ch-left" class="ch-line" style="width: 12px; height: 2px; top: 50%; left: 0; transform: translate(-8px, -50%);"></div>
+            <div id="ch-right" class="ch-line" style="width: 12px; height: 2px; top: 50%; right: 0; transform: translate(8px, -50%);"></div>
+        </div>
+        <div id="hitmarker">
+            <div class="hitmark-line" style="width: 12px; height: 2px; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+            <div class="hitmark-line" style="width: 2px; height: 12px; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+        </div>
+        <div id="sniper-scope">
+            <div class="scope-lens">
+                <div class="scope-ch scope-ch-h"></div>
+                <div class="scope-ch scope-ch-v"></div>
+                <div class="scope-dots scope-dots-h"></div>
+                <div class="scope-dots scope-dots-v"></div>
+            </div>
+        </div>
+        <div id="popups-container"></div>
+        
+        <div class="hud-bottom-left">
+            <div class="hp-container">
+                <div class="hp-bar-bg"><div id="hp-bar" class="hp-bar-fill" style="width: 100%;"></div></div>
+                <span id="hp-text">100 HP</span>
+            </div>
+            <div class="stance-indicator" id="stance-indicator">STAND</div>
+        </div>
+        
+        <div class="hud-bottom-right">
+            <div class="ammo-display">
+                <span id="ammo-clip">30</span> / <span id="ammo-reserve">120</span>
+            </div>
+            <div class="weapon-name-hud" id="weapon-name-hud">M4A1 ASSAULT RIFLE</div>
+            <div class="firemode-hud" id="firemode-hud">AUTO</div>
+        </div>
+
+        <div class="hud-top-right">
+            <div class="score-display">
+                <span class="team-phantoms">PHANTOMS: <span id="score-phantoms">150</span></span>
+                <span class="team-ghosts">GHOSTS: <span id="score-ghosts">135</span></span>
+            </div>
+            <div class="kd-display" id="kd-display">0 / 0</div>
+        </div>
+
+        <div id="kill-notify" class="kill-notify"></div>
+        <div id="kill-feed" class="kill-feed"></div>
+    </div>
+
+    <!-- Respawn Screen -->
+    <div id="respawn-screen" class="hidden">
+        <div class="respawn-panel">
+            <h2 class="pf-title">ELIMINATED</h2>
+            <p>Respawning in <span id="respawn-timer">5</span>s</p>
+            <button id="respawn-deploy-btn" class="menu-btn">DEPLOY NOW</button>
+        </div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div id="leaderboard" class="hidden">
+        <div class="lb-panel">
+            <h3>SCOREBOARD</h3>
+            <div class="lb-teams">
+                <span class="team-phantoms">PHANTOMS: <span id="lb-team-phantoms">150</span></span>
+                <span class="team-ghosts">GHOSTS: <span id="lb-team-ghosts">135</span></span>
+            </div>
+            <table class="lb-table">
                 <thead>
-                    <tr class="text-[11px] text-slate-400 tracking-widest border-b border-slate-700">
-                        <th class="text-left py-1 w-10">#</th>
-                        <th class="text-left py-1">PLAYER</th>
-                        <th class="text-left py-1">TEAM</th>
-                        <th class="text-right py-1">KILLS</th>
-                        <th class="text-right py-1">DEATHS</th>
-                        <th class="text-right py-1">K/D</th>
-                        <th class="text-right py-1">SCORE</th>
-                    </tr>
+                    <tr><th>#</th><th>PLAYER</th><th>TEAM</th><th>K</th><th>D</th><th>K/D</th><th>SCORE</th></tr>
                 </thead>
                 <tbody id="lb-body"></tbody>
             </table>
-            <div class="mt-3 text-[11px] text-slate-500 tracking-widest text-center">RELEASE [TAB] TO CLOSE</div>
         </div>
     </div>
 
-    <!-- Sniper Scope Overlay -->
-    <div id="sniper-scope" class="flex items-center justify-center">
-        <!-- Reticle Crosshairs -->
-        <div class="w-full h-[1.5px] bg-red-500/90 shadow-[0_0_4px_rgba(239,68,68,0.8)]"></div>
-        <div class="absolute h-full w-[1.5px] bg-red-500/90 shadow-[0_0_4px_rgba(239,68,68,0.8)]"></div>
-        <!-- Center Mil-Dot Circles -->
-        <div class="absolute w-28 h-28 border border-red-500/50 rounded-full pointer-events-none"></div>
-        <div class="absolute w-56 h-56 border border-red-500/25 rounded-full pointer-events-none"></div>
-        <!-- Center Dot and Hashes -->
-        <div class="absolute w-2 h-2 bg-red-500 rounded-full shadow-[0_0_6px_#ef4444]"></div>
-        <div class="absolute -translate-y-8 w-1.5 h-1.5 bg-red-400 rounded-full"></div>
-        <div class="absolute translate-y-8 w-1.5 h-1.5 bg-red-400 rounded-full"></div>
-        <div class="absolute -translate-x-8 w-1.5 h-1.5 bg-red-400 rounded-full"></div>
-        <div class="absolute translate-x-8 w-1.5 h-1.5 bg-red-400 rounded-full"></div>
-        <div class="absolute -translate-y-16 w-1 h-1 bg-red-400/80 rounded-full"></div>
-        <div class="absolute translate-y-16 w-1 h-1 bg-red-400/80 rounded-full"></div>
-        <div class="absolute -translate-x-16 w-1 h-1 bg-red-400/80 rounded-full"></div>
-        <div class="absolute translate-x-16 w-1 h-1 bg-red-400/80 rounded-full"></div>
-        <!-- Tactical Elevation Text -->
-        <div class="absolute top-[38%] left-[53%] text-[10px] font-mono text-red-400/80 font-bold select-none">8x MAG</div>
-        <div class="absolute bottom-[38%] left-[53%] text-[10px] font-mono text-red-400/80 font-bold select-none">MIL-SPEC</div>
-    </div>
+    <!-- Hit Flash -->
+    <div id="hit-flash" class="hit-flash"></div>
 
-    <!-- Crosshair UI -->
-    <div id="crosshair" class="w-8 h-8">
-        <div id="ch-top" class="ch-line w-[2px] h-2 left-1/2 -translate-x-1/2 top-0"></div>
-        <div id="ch-bottom" class="ch-line w-[2px] h-2 left-1/2 -translate-x-1/2 bottom-0"></div>
-        <div id="ch-left" class="ch-line h-[2px] w-2 top-1/2 -translate-y-1/2 left-0"></div>
-        <div id="ch-right" class="ch-line h-[2px] w-2 top-1/2 -translate-y-1/2 right-0"></div>
-        <div class="absolute w-1 h-1 bg-white rounded-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-70"></div>
-    </div>
-
-    <!-- Hitmarker overlay -->
-    <div id="hitmarker" class="w-6 h-6">
-        <div class="hitmark-line w-full h-[2px] top-1/2 -translate-y-1/2"></div>
-        <div class="hitmark-line h-full w-[2px] left-1/2 -translate-x-1/2"></div>
-    </div>
-
-    <!-- Dynamic Popups Container -->
-    <div id="popups-container" class="absolute inset-0 pointer-events-none z-30"></div>
-
-    <!-- HUD Overlay -->
-    <div id="hud" class="absolute inset-0 pointer-events-none flex flex-col justify-between p-6 z-10 hidden">
-        <!-- Top Navigation & Match Score Header -->
-        <div class="flex justify-between items-start">
-            <!-- Team Score Bar -->
-            <div class="pf-panel pf-clip-hud px-6 py-2.5 flex items-center gap-6 shadow-2xl">
-                <div class="flex items-center gap-2">
-                    <span class="text-xs font-bold text-sky-400 tracking-wider">PHANTOMS</span>
-                    <span id="score-phantoms" class="text-2xl font-bold text-sky-400 font-mono">150</span>
-                </div>
-                <div class="text-xs text-slate-500 font-bold">VS</div>
-                <div class="flex items-center gap-2">
-                    <span id="score-ghosts" class="text-2xl font-bold text-orange-400 font-mono">135</span>
-                    <span class="text-xs font-bold text-orange-400 tracking-wider">GHOSTS</span>
-                </div>
-            </div>
-
-            <!-- Top Right Killfeed -->
-            <div id="kill-feed" class="flex flex-col gap-1 items-end text-xs font-bold text-slate-200"></div>
-        </div>
-
-        <!-- Middle Hit / Score Notification Center -->
-        <div class="flex flex-col items-center justify-center gap-1">
-            <div id="kill-notify" class="text-2xl font-black text-amber-400 tracking-widest uppercase opacity-0 transition-opacity duration-200 drop-shadow-[0_0_10px_rgba(245,158,11,0.8)]"></div>
-        </div>
-
-        <!-- Bottom HUD Stats -->
-        <div class="flex justify-between items-end">
-            <!-- Health & Stance Container -->
-            <div class="flex items-end gap-3">
-                <div class="pf-panel pf-clip-hud p-4 w-72 flex flex-col gap-2">
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs font-bold text-slate-400 tracking-widest">OPERATOR HEALTH</span>
-                        <span id="hp-text" class="text-sm font-bold text-sky-400 font-mono">100 HP</span>
-                    </div>
-                    <div class="w-full h-3 bg-slate-900 border border-slate-700/80 rounded-sm overflow-hidden p-0.5">
-                        <div id="hp-bar" class="h-full bg-gradient-to-r from-sky-500 to-cyan-400 transition-all duration-200" style="width: 100%;"></div>
-                    </div>
-                    <div class="flex justify-between items-center text-[11px] text-slate-400 font-mono">
-                        <span>STATUS: <span id="player-status" class="text-emerald-400 font-bold">READY</span></span>
-                        <span>K/D: <span id="kd-display" class="text-amber-400 font-bold">0 / 0</span></span>
-                    </div>
-                </div>
-
-                <!-- Stance Indicator (Moved Here) -->
-                <div class="pf-panel pf-clip-hud p-3 flex flex-col items-center justify-center gap-1">
-                    <span class="text-[9px] font-bold text-slate-400 tracking-widest">STANCE</span>
-                    <span id="stance-indicator" class="text-xs font-bold text-sky-400 tracking-widest uppercase bg-sky-950/80 px-3 py-1 border border-sky-500/40 pf-clip-btn">STAND</span>
-                </div>
-            </div>
-
-            <!-- Deployment, Model Manager & Settings Trigger -->
-            <div class="flex gap-3 pointer-events-auto">
-                <button id="open-loadout-btn" class="pf-panel pf-clip-btn px-5 py-3 text-sky-400 font-bold text-xs tracking-wider border border-sky-500/40 hover:bg-sky-500/20 active:scale-95 transition cursor-pointer flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-                    DEPLOYMENT & LOADOUT [N]
-                </button>
-                <button id="open-customizer-btn" class="pf-panel pf-clip-btn px-5 py-3 text-cyan-400 font-bold text-xs tracking-wider border border-cyan-500/40 hover:bg-cyan-500/20 active:scale-95 transition cursor-pointer flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                    BLENDER MODEL LOADER [M]
-                </button>
-                <button id="open-settings-btn" class="pf-panel pf-clip-btn px-5 py-3 text-amber-400 font-bold text-xs tracking-wider border border-amber-500/40 hover:bg-amber-500/20 active:scale-95 transition cursor-pointer flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    SETTINGS [O]
-                </button>
-            </div>
-
-            <!-- Ammo & Weapon Display -->
-            <div class="pf-panel pf-clip-hud p-4 w-72 flex flex-col items-end gap-1">
-                <div id="weapon-name-hud" class="text-xs font-bold text-sky-400 tracking-wider">M4A1 ASSAULT RIFLE</div>
-                <div class="flex items-baseline gap-2">
-                    <span id="ammo-clip" class="text-4xl font-extrabold text-amber-400 font-mono">30</span>
-                    <span class="text-lg text-slate-500 font-mono">/</span>
-                    <span id="ammo-reserve" class="text-xl font-bold text-slate-400 font-mono">120</span>
-                </div>
-                <div class="text-[11px] font-mono text-slate-400 flex gap-3">
-                    <span>FIREMODE: <span id="firemode-hud" class="text-sky-400 font-bold">AUTO</span></span>
-                    <span>TYPE: <span id="weapontype-hud" class="text-sky-400 font-bold">PRIMARY</span></span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Damage Red Flash Overlay -->
-    <div id="hit-flash" class="absolute inset-0 bg-red-600/0 pointer-events-none transition-colors duration-100 z-15"></div>
-
-    <!-- Death & Respawn Cooldown Screen Overlay -->
-    <div id="respawn-screen" class="hidden absolute inset-0 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center text-white z-40 transition-opacity duration-300">
-        <div class="pf-panel pf-clip-hud p-8 max-w-md w-full text-center space-y-5 border-red-500/50 shadow-[0_0_30px_rgba(239,68,68,0.3)]">
-            <div class="text-red-500 font-extrabold text-xs tracking-[0.3em] uppercase">SYSTEM NOTICE</div>
-            <h2 class="pf-title text-5xl font-black text-red-500 tracking-wider">KILLED IN ACTION</h2>
-            <div class="w-full h-[1px] bg-red-500/30 my-2"></div>
-            <p class="text-sm font-mono text-slate-300">RE-ORGANIZING PHANTOM TACTICAL SQUAD...</p>
-            
-            <div class="py-4">
-                <div class="text-xs text-slate-400 font-mono mb-1">RESPAWN COOLDOWN</div>
-                <div id="respawn-timer" class="text-6xl font-black font-mono text-amber-400 tracking-widest drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]">5</div>
-            </div>
-
-            <button id="respawn-deploy-btn" disabled class="w-full py-3.5 bg-slate-800 text-slate-500 font-extrabold text-sm tracking-widest pf-clip-btn border border-slate-700 transition cursor-not-allowed">
-                DEPLOYING IN 5s
-            </button>
-        </div>
-    </div>
-
-    <!-- Deployment / Loadout Select Screen (PF Style) -->
-    <div id="loadout-screen" class="absolute inset-0 bg-slate-950/90 backdrop-blur-md flex flex-col justify-between p-8 text-white z-40 transition-opacity duration-300">
-        <!-- Top Menu Title -->
-        <div class="flex justify-between items-center border-b border-sky-500/30 pb-4">
-            <div>
-                <h1 class="pf-title text-5xl font-bold tracking-wider text-sky-400">PHANTOM FORCES 3D</h1>
-                <p class="text-xs text-slate-400 font-mono tracking-widest">TACTICAL DEPLOYMENT & LOADOUT CUSTOMIZATION</p>
-            </div>
-            <div class="flex gap-4 items-center">
-                <button id="open-settings-loadout-btn" class="pf-panel pf-clip-btn px-4 py-2 text-amber-400 font-bold text-xs tracking-wider border border-amber-500/40 hover:bg-amber-500/20 active:scale-95 transition cursor-pointer flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    SETTINGS [O]
-                </button>
-                <div class="text-right">
-                    <div class="text-xs text-slate-400">OPERATOR</div>
-                    <div class="text-sm font-bold text-sky-400">PHANTOM-1</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Loadout Customization Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-auto max-w-6xl mx-auto w-full">
-            <!-- Weapon Categories Select -->
-            <div class="pf-panel pf-clip-hud p-6 space-y-4">
-                <h2 class="text-sm font-bold text-sky-400 tracking-wider border-b border-slate-700 pb-2">PRIMARY WEAPON</h2>
-                <div class="space-y-2">
-                    <button class="weapon-select-btn w-full pf-clip-btn p-3 bg-sky-500/20 border border-sky-400 text-left hover:bg-sky-500/30 transition cursor-pointer" data-weapon="m4a1">
-                        <div class="text-sm font-bold text-sky-300">M4A1 ASSAULT RIFLE</div>
-                        <div class="text-[11px] text-slate-400 font-mono">Fully Automatic | High Fire Rate</div>
-                    </button>
-                    <button class="weapon-select-btn w-full pf-clip-btn p-3 bg-slate-900/80 border border-slate-700 text-left hover:bg-sky-500/20 transition cursor-pointer" data-weapon="intervention">
-                        <div class="text-sm font-bold text-slate-200">INTERVENTION SNIPER</div>
-                        <div class="text-[11px] text-slate-400 font-mono">Bolt-Action | High Damage Scope</div>
-                    </button>
-                    <button class="weapon-select-btn w-full pf-clip-btn p-3 bg-slate-900/80 border border-slate-700 text-left hover:bg-sky-500/20 transition cursor-pointer" data-weapon="mp5">
-                        <div class="text-sm font-bold text-slate-200">MP5 SUBMACHINE GUN</div>
-                        <div class="text-[11px] text-slate-400 font-mono">Close Quarters | Low Recoil</div>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Weapon Modular Attachments Options -->
-            <div class="pf-panel pf-clip-hud p-6 space-y-4">
-                <div class="border-b border-slate-700 pb-2 flex justify-between items-center">
-                    <h2 class="text-sm font-bold text-sky-400 tracking-wider">MODULAR ATTACHMENTS</h2>
-                    <span class="text-[10px] text-cyan-400 font-mono">ANY PART ON ANY GUN</span>
-                </div>
-                <div class="space-y-2.5 max-h-[380px] overflow-y-auto pr-1 custom-scrollbar">
-                    <div>
-                        <label class="text-[11px] font-bold text-slate-300 mb-0.5 block">1. OPTIC / SCOPE</label>
-                        <select id="optic-select" class="w-full bg-slate-900 border border-slate-700 text-xs text-sky-300 p-2 rounded-none font-mono">
-                            <option value="iron">Iron Sights (Fastest ADS)</option>
-                            <option value="reddot">Coyote Red Dot Sight</option>
-                            <option value="acog">ACOG 4x Tactical Scope</option>
-                            <option value="sniper">8x High-Power Sniper Scope</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-[11px] font-bold text-slate-300 mb-0.5 block">2. MUZZLE ATTACHMENT</label>
-                        <select id="muzzle-select" class="w-full bg-slate-900 border border-slate-700 text-xs text-sky-300 p-2 rounded-none font-mono">
-                            <option value="none">Standard Flash Hider</option>
-                            <option value="suppressor">PBS Tactical Suppressor (-Recoil/Silent)</option>
-                            <option value="compensator">Recoil Compensator (-30% Side Jitter)</option>
-                            <option value="brake">Heavy Muzzle Brake (-28% Climb)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-[11px] font-bold text-slate-300 mb-0.5 block">3. TACTICAL STOCK</label>
-                        <select id="stock-select" class="w-full bg-slate-900 border border-slate-700 text-xs text-sky-300 p-2 rounded-none font-mono">
-                            <option value="standard">Standard Tactical Stock (Balanced)</option>
-                            <option value="skeletal">Skeletal Minimalist Stock (+Speed)</option>
-                            <option value="heavy">Heavy Sniper Stock (-Camera Kick)</option>
-                            <option value="folded">CQB No Stock / Folded (+Mobility)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-[11px] font-bold text-slate-300 mb-0.5 block">4. MAGAZINE CAPACITY</label>
-                        <select id="mag-select" class="w-full bg-slate-900 border border-slate-700 text-xs text-sky-300 p-2 rounded-none font-mono">
-                            <option value="standard">Standard Magazine</option>
-                            <option value="extended">Extended Mag (+50% Capacity)</option>
-                            <option value="drum">High-Cap Drum Mag (+100% Capacity)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-[11px] font-bold text-slate-300 mb-0.5 block">5. HANDLE / FOREGRIP</label>
-                        <select id="handle-select" class="w-full bg-slate-900 border border-slate-700 text-xs text-sky-300 p-2 rounded-none font-mono">
-                            <option value="none">None (Standard Handguard)</option>
-                            <option value="vertical">Vertical Foregrip (-22% Climb)</option>
-                            <option value="angled">Angled Grip (+ADS Transition)</option>
-                            <option value="stubby">Tactical Stubby Grip (+Stability)</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Weapon Stats Dashboard -->
-            <div class="pf-panel pf-clip-hud p-6 space-y-4 flex flex-col justify-between">
-                <div>
-                    <h2 class="text-sm font-bold text-sky-400 tracking-wider border-b border-slate-700 pb-2">PERFORMANCE SPECS</h2>
-                    <div id="weapon-stats-box" class="space-y-3 mt-3">
-                        <div>
-                            <div class="flex justify-between text-xs text-slate-300 mb-1">
-                                <span>DAMAGE</span>
-                                <span id="stat-damage" class="font-mono text-amber-400">34</span>
-                            </div>
-                            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                                <div id="bar-damage" class="h-full bg-amber-400" style="width: 68%;"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-xs text-slate-300 mb-1">
-                                <span>FIRE RATE (RPM)</span>
-                                <span id="stat-firerate" class="font-mono text-cyan-400">800</span>
-                            </div>
-                            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                                <div id="bar-firerate" class="h-full bg-cyan-400" style="width: 80%;"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-xs text-slate-300 mb-1">
-                                <span>RECOIL CONTROL</span>
-                                <span id="stat-recoil" class="font-mono text-emerald-400">75</span>
-                            </div>
-                            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                                <div id="bar-recoil" class="h-full bg-emerald-400" style="width: 75%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <button id="deploy-btn" class="w-full py-4 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-lg tracking-widest pf-clip-btn shadow-lg shadow-sky-500/30 hover:scale-[1.02] active:scale-95 transition cursor-pointer">
-                    DEPLOY INTO COMBAT
-                </button>
-            </div>
-        </div>
-
-        <!-- Tactical Controls Hint Footer -->
-        <div class="border-t border-slate-800 pt-3 text-center text-xs text-slate-400 font-mono">
-            TACTICAL CONTROLS: [WASD] Move | [SHIFT] Sprint | [RIGHT CLICK] ADS | [C/CTRL] Crouch | [Z] Prone | [SPACE] Jump | [R] Reload | [1/2/3] Weapons | [TAB] Leaderboard | [O] Settings | [N] Loadout | [M] Models
-        </div>
-    </div>
-
-    <!-- Game Settings Modal -->
-    <div id="settings-panel" class="hidden absolute inset-0 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center text-white z-50 p-6">
-        <div class="max-w-xl w-full pf-panel pf-clip-hud p-6 flex flex-col gap-6 shadow-2xl">
-            <div class="flex justify-between items-center border-b border-slate-700/80 pb-4">
-                <div>
-                    <h2 class="pf-title text-3xl font-bold text-amber-400 tracking-wider">GAME SETTINGS</h2>
-                    <p class="text-xs text-slate-400 font-mono tracking-wider">TACTICAL DISPLAY, AUDIO & CONTROL PREFERENCES</p>
-                </div>
-                <button id="close-settings-btn" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-none text-xs font-bold transition cursor-pointer border border-slate-700">Close [ESC / O]</button>
-            </div>
-
-            <div class="space-y-5">
-                <!-- Field of View (FOV) -->
-                <div class="bg-slate-900/60 p-4 border border-slate-800 space-y-2">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <label class="text-xs font-bold text-sky-400 tracking-wider">FIELD OF VIEW (FOV)</label>
-                            <p class="text-[11px] text-slate-400 font-mono">Camera view angle for peripheral vision</p>
-                        </div>
-                        <span id="val-setting-fov" class="text-lg font-mono font-bold text-sky-400">78°</span>
-                    </div>
-                    <input type="range" id="setting-fov" min="60" max="115" step="1" value="78" class="w-full accent-sky-400 cursor-pointer">
-                    <div class="flex justify-between text-[10px] text-slate-500 font-mono">
-                        <span>60° (NARROW)</span>
-                        <span>78° (DEFAULT)</span>
-                        <span>115° (ULTRAWIDE)</span>
-                    </div>
-                </div>
-
-                <!-- Master Audio Volume -->
-                <div class="bg-slate-900/60 p-4 border border-slate-800 space-y-2">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <label class="text-xs font-bold text-amber-400 tracking-wider">AUDIO VOLUME</label>
-                            <p class="text-[11px] text-slate-400 font-mono">Combat SFX, gunshots & hitmarker audio</p>
-                        </div>
-                        <span id="val-setting-volume" class="text-lg font-mono font-bold text-amber-400">100%</span>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <input type="range" id="setting-volume" min="0" max="100" step="1" value="100" class="w-full accent-amber-400 cursor-pointer">
-                        <button id="test-audio-btn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 text-[11px] font-bold rounded-none whitespace-nowrap cursor-pointer transition">
-                            TEST AUDIO
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Mouse Sensitivity -->
-                <div class="bg-slate-900/60 p-4 border border-slate-800 space-y-2">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <label class="text-xs font-bold text-emerald-400 tracking-wider">MOUSE SENSITIVITY</label>
-                            <p class="text-[11px] text-slate-400 font-mono">Aim speed & recoil compensation sensitivity</p>
-                        </div>
-                        <span id="val-setting-sens" class="text-lg font-mono font-bold text-emerald-400">1.00x</span>
-                    </div>
-                    <input type="range" id="setting-sens" min="0.2" max="3.0" step="0.05" value="1.0" class="w-full accent-emerald-400 cursor-pointer">
-                    <div class="flex justify-between text-[10px] text-slate-500 font-mono">
-                        <span>0.20x (LOW)</span>
-                        <span>1.00x (NORMAL)</span>
-                        <span>3.00x (HIGH)</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer Actions -->
-            <div class="flex justify-between items-center pt-2 border-t border-slate-800">
-                <button id="reset-settings-btn" class="text-xs text-slate-400 hover:text-amber-400 transition underline cursor-pointer">
-                    Reset Defaults
-                </button>
-                <button id="save-close-settings-btn" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs tracking-wider pf-clip-btn transition cursor-pointer">
-                    APPLY & CLOSE
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Blender Model Manager Modal -->
-    <div id="customizer-panel" class="hidden absolute inset-0 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center text-white z-50 p-6">
-        <div class="max-w-4xl w-full max-h-[90vh] pf-panel pf-clip-hud p-6 flex flex-col gap-6 shadow-2xl overflow-y-auto custom-scrollbar">
-            
-            <div class="flex justify-between items-center border-b border-slate-700/80 pb-4">
-                <div>
-                    <h2 class="text-2xl font-bold text-cyan-400">Blender 3D Asset Importer</h2>
-                    <p class="text-xs text-slate-400">Import custom Blender .glb / .gltf files for firearms, sights, or bot models</p>
-                </div>
-                <button id="close-customizer-btn" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-none text-xs font-bold transition cursor-pointer border border-slate-700">Close Manager [ESC]</button>
-            </div>
-
-            <!-- Slot 1: First-Person Gun Model -->
-            <div class="bg-slate-900/60 p-5 border border-slate-800 space-y-4">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-sm font-bold text-sky-400 flex items-center gap-2">
-                        CUSTOM WEAPON MODEL (BLENDER)
-                    </h3>
-                    <button id="reset-gun-btn" class="text-[11px] text-slate-400 hover:text-sky-400 underline">Reset Default</button>
-                </div>
-
-                <div id="gun-dropzone" class="border-2 border-dashed border-slate-700 bg-slate-950/50 hover:border-sky-500 p-6 text-center transition cursor-pointer flex flex-col items-center justify-center gap-2">
-                    <p class="text-xs font-semibold text-slate-300">Drag & Drop Blender <code class="text-sky-400">.glb</code> or <code class="text-sky-400">.gltf</code> model here</p>
-                    <p class="text-[11px] text-slate-500">or click to browse local files</p>
-                    <input type="file" id="gun-file-input" accept=".gltf,.glb" class="hidden">
-                </div>
-
-                <!-- Weapon Fine-Tuning Transformation Controls -->
-                <div class="space-y-3 pt-2 border-t border-slate-800">
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        <div>
-                            <label class="text-[11px] text-slate-400">Scale: <span id="val-gun-scale" class="text-sky-400">1.0</span></label>
-                            <input type="range" id="gun-scale" min="0.1" max="3" step="0.05" value="1.0" class="w-full accent-sky-400">
-                        </div>
-                        <div>
-                            <label class="text-[11px] text-slate-400">Pos X: <span id="val-gun-posx" class="text-sky-400">0.2</span></label>
-                            <input type="range" id="gun-posx" min="-1" max="1" step="0.01" value="0.2" class="w-full accent-sky-400">
-                        </div>
-                        <div>
-                            <label class="text-[11px] text-slate-400">Pos Y: <span id="val-gun-posy" class="text-sky-400">-0.22</span></label>
-                            <input type="range" id="gun-posy" min="-1" max="1" step="0.01" value="-0.22" class="w-full accent-sky-400">
-                        </div>
-                        <div>
-                            <label class="text-[11px] text-slate-400">Pos Z: <span id="val-gun-posz" class="text-sky-400">-0.4</span></label>
-                            <input type="range" id="gun-posz" min="-2" max="1" step="0.01" value="-0.4" class="w-full accent-sky-400">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="loader-status" class="text-xs font-mono text-slate-400 text-center py-2">System Ready.</div>
-        </div>
-    </div>
-
-    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="gunsLoad.js"></script>
     <script src="game.js"></script>
 </body>
