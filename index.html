@@ -3,125 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tactical Ops 3D</title>
+    <title>Phantom Forces</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <!-- Main Menu -->
     <div id="main-menu">
-        <h1 class="pf-title">TACTICAL OPS</h1>
-        <button id="btn-play" class="menu-btn">DEPLOY</button>
-        <button id="btn-loadout" class="menu-btn">LOADOUT</button>
-        <button id="btn-settings-menu" class="menu-btn">SETTINGS</button>
+        <div class="menu-card">
+            <div class="menu-tag">Build 3.4</div>
+            <h1 class="pf-title">PHANTOM<br>FORCES</h1>
+            <div class="menu-actions">
+                <button id="btn-play" class="menu-btn primary">Deploy</button>
+                <button id="btn-loadout" class="menu-btn">Loadout</button>
+                <button id="btn-settings-menu" class="menu-btn">Settings</button>
+            </div>
+            <div class="menu-controls-hint">
+                <span><b>1</b>Primary</span><span><b>2</b>Pistol</span>
+                <span><b>3</b>/<b>E</b>Melee</span><span><b>Q</b>Swap</span>
+                <span><b>LMB</b>Fire</span><span><b>RMB</b>Aim / stab</span>
+                <span><b>R</b>Reload</span><span><b>V</b>Fire mode</span>
+                <span><b>F</b>Inspect</span><span><b>G</b>Grenade</span>
+            </div>
+        </div>
     </div>
 
     <!-- Loadout Screen -->
     <div id="loadout-screen" class="hidden">
         <div class="loadout-left">
-            <h2 class="section-title">WEAPON LOADOUT</h2>
-            
-            <div class="weapon-selectors">
-                <button class="weapon-select-btn active" data-weapon="m4a1">M4A1</button>
-                <button class="weapon-select-btn" data-weapon="AWP">AWP</button>
-                <button class="weapon-select-btn" data-weapon="mp5">MP5</button>
+            <div class="lo-head">
+                <h2 class="section-title">Loadout</h2>
+                <button id="btn-back-loadout" class="menu-btn small">Back</button>
             </div>
 
-            <div class="attachment-selectors">
-                <div class="select-group">
-                    <label>OPTIC</label>
-                    <select id="optic-select">
-                        <option value="iron">Iron Sights</option>
-                        <option value="reddot">Red Dot Sight</option>
-                        <option value="acog">ACOG 4x Scope</option>
-                        <option value="sniper">8x Sniper Scope</option>
-                    </select>
+            <!-- PRIMARY -->
+            <section class="loadout-slot-section">
+                <div class="slot-header"><span class="slot-title">Primary</span><span class="slot-equipped" id="eq-primary"></span></div>
+                <div id="primary-selectors" class="slot-body">
+                    <details class="cat" data-class="Assault rifle" open>
+                        <summary><b>AR</b><span class="cat-name">Assault rifles</span><span class="cat-count">1</span></summary>
+                        <div class="weapon-grid">
+                            <button class="weapon-card active" data-slot="primary" data-weapon="m4a1"><span class="weapon-title">M4A1</span><span class="weapon-caliber">5.56×45mm</span></button>
+                        </div>
+                    </details>
+                    <details class="cat" data-class="Sniper rifle" open>
+                        <summary><b>SR</b><span class="cat-name">Sniper rifles</span><span class="cat-count">1</span></summary>
+                        <div class="weapon-grid">
+                            <button class="weapon-card" data-slot="primary" data-weapon="AWP"><span class="weapon-title">AWP</span><span class="weapon-caliber">.338 Lapua</span></button>
+                        </div>
+                    </details>
+                    <details class="cat" data-class="Shotgun" open>
+                        <summary><b>SG</b><span class="cat-name">Shotguns</span><span class="cat-count">2</span></summary>
+                        <div class="weapon-grid">
+                            <button class="weapon-card" data-slot="primary" data-weapon="toz34"><span class="weapon-title">TOZ-34</span><span class="weapon-caliber">12 gauge, double barrel</span></button>
+                            <button class="weapon-card" data-slot="primary" data-weapon="benellim4"><span class="weapon-title">Benelli M4</span><span class="weapon-caliber">12 gauge, semi-auto</span></button>
+                        </div>
+                    </details>
+                    <details class="cat" data-class="Marksman rifle" open>
+                        <summary><b>DMR</b><span class="cat-name">Marksman rifles</span><span class="cat-count">1</span></summary>
+                        <div class="weapon-grid">
+                            <button class="weapon-card" data-slot="primary" data-weapon="svd"><span class="weapon-title">SVD Dragunov</span><span class="weapon-caliber">7.62×54mmR</span></button>
+                        </div>
+                    </details>
+                    <details class="cat" data-class="Battle rifle">
+                        <summary><b>BR</b><span class="cat-name">Battle rifles</span><span class="cat-count">0</span></summary>
+                        <p class="cat-empty">No battle rifles in the armory yet.</p>
+                    </details>
+                    <details class="cat" data-class="Submachine gun" open>
+                        <summary><b>SMG</b><span class="cat-name">Submachine guns</span><span class="cat-count">1</span></summary>
+                        <div class="weapon-grid">
+                            <button class="weapon-card" data-slot="primary" data-weapon="mp5"><span class="weapon-title">MP5</span><span class="weapon-caliber">9×19mm</span></button>
+                        </div>
+                    </details>
+                    <details class="cat" data-class="Light machine gun" open>
+                        <summary><b>LMG</b><span class="cat-name">Light machine guns</span><span class="cat-count">1</span></summary>
+                        <div class="weapon-grid">
+                            <button class="weapon-card" data-slot="primary" data-weapon="m249"><span class="weapon-title">M249 SAW</span><span class="weapon-caliber">5.56×45mm belt</span></button>
+                        </div>
+                    </details>
                 </div>
-                <div class="select-group">
-                    <label>MUZZLE</label>
-                    <select id="muzzle-select">
-                        <option value="none">Standard Flash Hider</option>
-                        <option value="suppressor">Tactical Suppressor</option>
-                        <option value="compensator">Recoil Compensator</option>
-                        <option value="brake">Heavy Muzzle Brake</option>
-                    </select>
-                </div>
-                <div class="select-group">
-                    <label>STOCK</label>
-                    <select id="stock-select">
-                        <option value="standard">Standard Stock</option>
-                        <option value="skeletal">Skeletal Minimalist</option>
-                        <option value="heavy">Heavy Sniper Stock</option>
-                        <option value="folded">CQB Folded</option>
-                    </select>
-                </div>
-                <div class="select-group">
-                    <label>MAGAZINE</label>
-                    <select id="mag-select">
-                        <option value="standard">Standard Mag</option>
-                        <option value="extended">Extended Mag (+50%)</option>
-                        <option value="drum">Drum Mag (+100%)</option>
-                    </select>
-                </div>
-                <div class="select-group">
-                    <label>GRIP</label>
-                    <select id="handle-select">
-                        <option value="none">None</option>
-                        <option value="vertical">Vertical Foregrip</option>
-                        <option value="angled">Angled Grip</option>
-                        <option value="stubby">Stubby Grip</option>
-                    </select>
-                </div>
-            </div>
+            </section>
 
-            <button id="btn-back-loadout" class="menu-btn small">BACK</button>
+            <!-- PISTOLS -->
+            <section class="loadout-slot-section">
+                <div class="slot-header"><span class="slot-title">Pistols</span><span class="slot-equipped" id="eq-secondary"></span></div>
+                <div id="secondary-selectors" class="slot-body" data-class="Pistol">
+                    <div class="weapon-grid">
+                        <button class="weapon-card active" data-slot="secondary" data-weapon="g17"><span class="weapon-title">G17 Gen 5</span><span class="weapon-caliber">9×19mm</span></button>
+                        <button class="weapon-card" data-slot="secondary" data-weapon="uzi"><span class="weapon-title">IMI Uzi</span><span class="weapon-caliber">9×19mm machine pistol</span></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MELEE -->
+            <section class="loadout-slot-section">
+                <div class="slot-header"><span class="slot-title">Melee</span><span class="slot-equipped" id="eq-melee"></span></div>
+                <div id="melee-selectors" class="slot-body" data-class="Melee">
+                    <div class="weapon-grid">
+                        <button class="weapon-card active" data-slot="melee" data-weapon="bayonet"><span class="weapon-title">M9 Bayonet</span><span class="weapon-caliber">Slash and stab</span></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ATTACHMENTS -->
+            <section class="loadout-slot-section" id="attach-section">
+                <div class="slot-header"><span class="slot-title">Attachments</span></div>
+                <p id="attach-note" class="attach-note hidden">Pistols can't take stocks or underbarrel grips.</p>
+                <div class="attachment-selectors">
+                    <div class="select-group"><label>Optic</label>
+                        <select id="optic-select"><option value="iron">Iron sights</option><option value="reddot">Coyote red dot</option><option value="acog">ACOG 4x scope</option><option value="sniper">8x ballistic scope</option></select></div>
+                    <div class="select-group"><label>Muzzle</label>
+                        <select id="muzzle-select"><option value="none">Standard flash hider</option><option value="suppressor">PBS suppressor</option><option value="compensator">Recoil compensator</option><option value="brake">Heavy muzzle brake</option></select></div>
+                    <div class="select-group"><label>Stock</label>
+                        <select id="stock-select"><option value="standard">Standard stock</option><option value="skeletal">Skeletal minimalist</option><option value="heavy">Heavy marksman stock</option><option value="folded">CQB folded / no stock</option></select></div>
+                    <div class="select-group"><label>Magazine</label>
+                        <select id="mag-select"><option value="standard">Standard magazine</option><option value="extended">Extended mag (+50%)</option><option value="drum">Drum magazine (+100%)</option></select></div>
+                    <div class="select-group"><label>Underbarrel</label>
+                        <select id="handle-select"><option value="none">Standard handguard</option><option value="vertical">Vertical foregrip</option><option value="angled">Angled grip</option><option value="stubby">Stubby grip</option><option value="skeleton">Skeleton grip</option><option value="folding">Folding grip</option></select></div>
+                </div>
+            </section>
         </div>
+
         <div class="loadout-right">
             <div id="loadout-viewer"></div>
+            <div class="lo-info">
+                <span id="lo-class" class="lo-class"></span>
+                <h3 id="lo-name" class="lo-name"></h3>
+            </div>
+            <div id="lo-stats" class="lo-stats"></div>
         </div>
     </div>
 
     <!-- Settings Screen -->
     <div id="settings-screen" class="hidden">
         <div class="settings-panel">
-            <h2 class="section-title">SETTINGS</h2>
-            <div class="setting-row">
-                <label>FIELD OF VIEW</label>
-                <div class="setting-control">
-                    <input type="range" id="setting-fov" min="60" max="110" value="78">
-                    <span id="val-setting-fov">78°</span>
-                </div>
-            </div>
-            <div class="setting-row">
-                <label>MASTER VOLUME</label>
-                <div class="setting-control">
-                    <input type="range" id="setting-volume" min="0" max="100" value="100">
-                    <span id="val-setting-volume">100%</span>
-                </div>
-            </div>
-            <div class="setting-row">
-                <label>MOUSE SENSITIVITY</label>
-                <div class="setting-control">
-                    <input type="range" id="setting-sens" min="0.1" max="3.0" step="0.05" value="1.0">
-                    <span id="val-setting-sens">1.00x</span>
-                </div>
-            </div>
-            <button id="btn-back-settings" class="menu-btn small">BACK</button>
+            <h2 class="section-title">Settings</h2>
+            <div class="setting-row"><label>Field of view</label><div class="setting-control"><input type="range" id="setting-fov" min="60" max="110" value="78"><span id="val-setting-fov">78°</span></div></div>
+            <div class="setting-row"><label>Master volume</label><div class="setting-control"><input type="range" id="setting-volume" min="0" max="100" value="100"><span id="val-setting-volume">100%</span></div></div>
+            <div class="setting-row"><label>Mouse sensitivity</label><div class="setting-control"><input type="range" id="setting-sens" min="0.1" max="3.0" step="0.05" value="1.0"><span id="val-setting-sens">1.00x</span></div></div>
+            <button id="btn-back-settings" class="menu-btn small">Back</button>
         </div>
     </div>
 
-    <!-- In-Game HUD -->
+    <!-- ====================================================================
+         PHANTOM FORCES ULTRA-MINIMAL HIGH-CONTRAST IN-GAME HUD
+         ==================================================================== -->
     <div id="hud" class="hidden">
+
+        <!-- 1. Center Screen: Dynamic 4-Line Crosshair & 4-Tick Diagonal "X" Hitmarker -->
         <div id="crosshair">
-            <div id="ch-top" class="ch-line" style="width: 2px; height: 12px; left: 50%; top: 0; transform: translate(-50%, -8px);"></div>
-            <div id="ch-bottom" class="ch-line" style="width: 2px; height: 12px; left: 50%; bottom: 0; transform: translate(-50%, 8px);"></div>
-            <div id="ch-left" class="ch-line" style="width: 12px; height: 2px; top: 50%; left: 0; transform: translate(-8px, -50%);"></div>
-            <div id="ch-right" class="ch-line" style="width: 12px; height: 2px; top: 50%; right: 0; transform: translate(8px, -50%);"></div>
+            <div id="ch-top" class="ch-line ch-vert"></div>
+            <div id="ch-bottom" class="ch-line ch-vert"></div>
+            <div id="ch-left" class="ch-line ch-horiz"></div>
+            <div id="ch-right" class="ch-line ch-horiz"></div>
         </div>
+
         <div id="hitmarker">
-            <div class="hitmark-line" style="width: 12px; height: 2px; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
-            <div class="hitmark-line" style="width: 2px; height: 12px; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+            <div class="hitmark-line hm-tl"></div>
+            <div class="hitmark-line hm-tr"></div>
+            <div class="hitmark-line hm-bl"></div>
+            <div class="hitmark-line hm-br"></div>
         </div>
+
+        <!-- Sniper 8x Scope Overlay (minimal ballistic reticle, zero clutter) -->
         <div id="sniper-scope">
             <div class="scope-lens">
                 <div class="scope-ch scope-ch-h"></div>
@@ -129,69 +173,124 @@
                 <div class="scope-dots scope-dots-h"></div>
                 <div class="scope-dots scope-dots-v"></div>
             </div>
+            <div class="breath"><div id="breath-prompt" class="breath-prompt"></div><div class="breath-track"><div id="breath-bar"></div></div></div>
         </div>
+
+        <!-- World-space floating damage numbers container -->
         <div id="popups-container"></div>
-        
-        <div class="hud-bottom-left">
-            <div class="hp-container">
-                <div class="hp-bar-bg"><div id="hp-bar" class="hp-bar-fill" style="width: 100%;"></div></div>
-                <span id="hp-text">100 HP</span>
-            </div>
-            <div class="stance-indicator" id="stance-indicator">STAND</div>
-        </div>
-        
-        <div class="hud-bottom-right">
-            <div class="ammo-display">
-                <span id="ammo-clip">30</span> / <span id="ammo-reserve">120</span>
-            </div>
-            <div class="weapon-name-hud" id="weapon-name-hud">M4A1 ASSAULT RIFLE</div>
-            <div class="firemode-hud" id="firemode-hud">AUTO</div>
-        </div>
 
-        <div class="hud-top-right">
-            <div class="score-display">
-                <span class="team-phantoms">PHANTOMS: <span id="score-phantoms">150</span></span>
-                <span class="team-ghosts">GHOSTS: <span id="score-ghosts">135</span></span>
-            </div>
-            <div class="kd-display" id="kd-display">0 / 0</div>
-        </div>
-
+        <!-- 2. Center-Lower: Stacked Kill / XP Feed Pop-up -->
+        <div id="xp-feed" class="xp-feed"></div>
         <div id="kill-notify" class="kill-notify"></div>
+
+        <!-- 3. Bottom-Right: Weapon Telemetry (Name, Fire Mode Strip, Tabular Ammo, Grenade Pips) -->
+        <div class="hud-panel hud-bottom-right" id="weapon-telemetry">
+            <div class="telemetry-header">
+                <span class="weapon-name-hud" id="weapon-name-hud">M4A1</span>
+                <div class="firemode-strip" id="firemode-strip">
+                    <span class="fm-pill active" data-mode="AUTO">AUTO</span>
+                    <span class="fm-pill" data-mode="BURST">BURST</span>
+                    <span class="fm-pill" data-mode="SEMI">SEMI</span>
+                </div>
+                <span id="firemode-hud" class="sr-only">AUTO</span>
+            </div>
+            <div class="telemetry-body">
+                <div class="ammo-display" id="ammo-display-box">
+                    <span id="ammo-clip" class="ammo-clip">31</span>
+                    <span class="ammo-slash">/</span>
+                    <span id="ammo-reserve" class="ammo-reserve">120</span>
+                </div>
+                <div class="grenade-telemetry" title="Frag Grenades [G]">
+                    <span class="grenade-label">G</span>
+                    <div id="grenade-pips" class="grenade-pips">
+                        <span class="grenade-pip active"></span>
+                        <span class="grenade-pip active"></span>
+                        <span class="grenade-pip"></span>
+                    </div>
+                    <span id="grenade-count" class="sr-only">2</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Bottom-Left: Minimalist Micro-Health Display -->
+        <div class="hud-panel hud-bottom-left" id="health-telemetry">
+            <div class="hp-header">
+                <span class="hp-label">Health</span>
+                <div class="hp-readout">
+                    <span id="hp-text">100</span>
+                    <span class="hp-unit">HP</span>
+                </div>
+            </div>
+            <div class="hp-bar-track">
+                <div id="hp-bar" class="hp-bar-fill"></div>
+            </div>
+        </div>
+
+        <!-- 5A. Top-Center: Match Ticket / Score Bar & Timer -->
+        <div class="hud-panel hud-top-center">
+            <div class="team-block phantoms">
+                <div class="team-meta">
+                    <span class="team-tag">PHANTOMS</span>
+                    <span id="score-phantoms" class="team-score">150</span>
+                </div>
+                <div class="ticket-track">
+                    <div id="bar-phantoms" class="ticket-fill phantoms-fill" style="transform: scaleX(0.75);"></div>
+                </div>
+            </div>
+
+            <div class="match-clock-box">
+                <div id="match-timer" class="match-timer">09:45</div>
+                <div id="kd-display" class="kd-micro">0 / 0</div>
+            </div>
+
+            <div class="team-block ghosts">
+                <div class="team-meta">
+                    <span id="score-ghosts" class="team-score">135</span>
+                    <span class="team-tag">GHOSTS</span>
+                </div>
+                <div class="ticket-track">
+                    <div id="bar-ghosts" class="ticket-fill ghosts-fill" style="transform: scaleX(0.675);"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5B. Top-Right: Compact Fast-Scrolling Killfeed -->
         <div id="kill-feed" class="kill-feed"></div>
     </div>
 
     <!-- Respawn Screen -->
     <div id="respawn-screen" class="hidden">
         <div class="respawn-panel">
+            <div class="menu-tag">You were killed</div>
             <h2 class="pf-title">ELIMINATED</h2>
-            <p>Respawning in <span id="respawn-timer">5</span>s</p>
-            <button id="respawn-deploy-btn" class="menu-btn">DEPLOY NOW</button>
+            <p>Redeploying in <span id="respawn-timer">5</span>s</p>
+            <button id="respawn-deploy-btn" class="menu-btn primary">Deploy now</button>
         </div>
     </div>
 
     <!-- Leaderboard -->
     <div id="leaderboard" class="hidden">
         <div class="lb-panel">
-            <h3>SCOREBOARD</h3>
+            <h3>Scoreboard</h3>
             <div class="lb-teams">
-                <span class="team-phantoms">PHANTOMS: <span id="lb-team-phantoms">150</span></span>
-                <span class="team-ghosts">GHOSTS: <span id="lb-team-ghosts">135</span></span>
+                <span class="team-phantoms">Phantoms <span id="lb-team-phantoms">150</span></span>
+                <span class="team-ghosts">Ghosts <span id="lb-team-ghosts">135</span></span>
             </div>
             <table class="lb-table">
-                <thead>
-                    <tr><th>#</th><th>PLAYER</th><th>TEAM</th><th>K</th><th>D</th><th>K/D</th><th>SCORE</th></tr>
-                </thead>
+                <thead><tr><th>#</th><th>Operator</th><th>Faction</th><th>K</th><th>D</th><th>K/D</th><th>Score</th></tr></thead>
                 <tbody id="lb-body"></tbody>
             </table>
         </div>
     </div>
 
-    <!-- Hit Flash -->
+    <!-- Screen Edge Damage Vignette -->
     <div id="hit-flash" class="hit-flash"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="audio.js"></script>
     <script src="gunsLoad.js"></script>
     <script src="game.js"></script>
+
 </body>
 </html>
